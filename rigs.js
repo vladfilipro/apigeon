@@ -10,7 +10,7 @@ gulp.task( 'test', function ( callback ) {
 } );
 
 module.exports = {
-    rigs: [ 'rig-javascript' ],
+    rigs: [ 'rig-javascript', 'rig-unit-test' ],
     commands: {
         'init': {
             taskname: 'rig-javascript__install-rig',
@@ -23,6 +23,24 @@ module.exports = {
         'lint-jshint': {
             taskname: 'rig-javascript__jshint',
             src: [ __dirname + '/core/**/*.js' ]
+        },
+        'unit-test': {
+            taskname: 'rig-unit-test__mocha',
+            src: [ './core/**/*.js' ],
+            tests: './spec/**/*.js',
+            istanbul: {
+                includeUntested: true
+            },
+            mocha: {
+                timeout: 10000
+            },
+            reports: {
+                dir: './coverage',
+                reporters: [ 'text' ],
+                reportOpts: {
+                    dir: './coverage'
+                }
+            }
         }
     }
 };

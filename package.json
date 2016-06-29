@@ -5,7 +5,9 @@
     "author": "Vlad Filip ( vlad.filip.dev@gmail.com )",
     "license": "SEE LICENSE IN LICENSE.md",
     "keywords": [
-        "node"
+        "node",
+        "express",
+        "websocket"
     ],
     "main": "./core/index.js",
     "repository": {
@@ -19,16 +21,15 @@
         "express": "4.14.0",
         "express-ws": "2.0.0-rc.1",
 
-        "request": "2.72.0",
-
         "aws-sdk": "*",
-        "mysql": "2.11.0",
+        "mysql": "2.11.1",
 
         "rigs": "*",
         "rig-javascript": "*",
-        "run-sequence": "1.2.1"
+        "rig-unit-test": "*",
+        "run-sequence": "1.2.2"
     },
     "scripts": {
-        "test": "./node_modules/.bin/gulp init"
+        "test": "npm outdated && ./node_modules/.bin/rigs && ./node_modules/.bin/gulp init && ./node_modules/.bin/gulp unit-test"
     }
 }

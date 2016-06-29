@@ -3,11 +3,11 @@
 var utils = require( __dirname + '/../utils' );
 var LogsClass = require( __dirname + '/../libs/logsClass' );
 
-module.exports = function ( config ) {
+module.exports = function ( paths, config ) {
     return function ( req, res, next ) {
 
         // Initialize logging
-        var logs = new LogsClass( config );
+        var logs = new LogsClass( paths.drivers, config );
         logs.set( {
             id: utils.uniqueId(),
             ip: req.ip,

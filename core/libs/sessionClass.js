@@ -3,11 +3,11 @@
 var utils = require( __dirname + '/../utils' );
 var QueryBuilder = require( __dirname + '/queryBuilder' );
 
-module.exports = function ( config ) {
+module.exports = function ( driversPath, config ) {
 
     var _self = this;
 
-    var dbDriver = require( __dirname + '/../drivers/' + config.driver );
+    var dbDriver = utils.getFile( config.driver, [ driversPath, __dirname + '/../drivers' ] );
 
     var sessionId;
     var created;
@@ -32,7 +32,7 @@ module.exports = function ( config ) {
             .insert( values )
             .execute( function ( err ) {
                 if ( err ) {
-                    console.log( 'Session creation error: ', err );
+                    utils.log( 'Session creation error: ', err );
                     cb( false );
                     return;
                 }
@@ -63,7 +63,7 @@ module.exports = function ( config ) {
             } )
             .execute( function ( err ) {
                 if ( err ) {
-                    console.log( 'Error saving session data: ', err );
+                    utils.log( 'Error saving session data: ', err );
                     cb( false );
                     return;
                 }
@@ -88,7 +88,7 @@ module.exports = function ( config ) {
             } )
             .execute( function ( err, data ) {
                 if ( err ) {
-                    console.log( 'Error retrieving session ', err );
+                    utils.log( 'Error retrieving session ', err );
                     cb( false );
                     return;
                 }

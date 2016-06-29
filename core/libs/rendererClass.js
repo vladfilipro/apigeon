@@ -1,17 +1,15 @@
 'use strict';
 
-module.exports = function ( api, acceptedContentTypes ) {
+var utils = require( __dirname + '/../utils' );
+
+module.exports = function ( renderersPath, api, acceptedContentTypes ) {
 
     var defaultRenderer = 'application/json';
 
     var preferedRenderer = ( api ) ? api.defaultRenderer() : defaultRenderer;
 
     var getFile = function ( name ) {
-        try {
-            return require( __dirname + '/../renderers/' + name.replace( '/', '-' ) );
-        } catch ( e ) {
-            return false;
-        }
+        return utils.getFile( name.replace( '/', '-' ), [ renderersPath, __dirname + '/../renderers' ] );
     };
 
     var getRendererByType = function ( type ) {

@@ -6,14 +6,14 @@ var ErrorClass = require( __dirname + '/../libs/errorClass' );
 var RendererClass = require( __dirname + '/../libs/rendererClass' );
 var loadApi = require( __dirname + '/../libs/loadApi' );
 
-module.exports = function () {
+module.exports = function ( paths ) {
 
     return function ( req, res ) {
 
         var urlParts = url.parse( req.url, true );
 
-        var api = loadApi( urlParts.pathname, req.session );
-        var renderer = new RendererClass( api, req.get( 'Accept' ) );
+        var api = loadApi( paths.apis, urlParts.pathname, req );
+        var renderer = new RendererClass( paths.renderers, api, req.get( 'Accept' ) );
 
         res.header( 'Content-type', renderer.contentType );
 
@@ -42,7 +42,7 @@ module.exports = function () {
             res.end( renderer.render( data ) );
         };
 
-        api._getData( req, function ( data, code ) {
+        api._getData( function ( data, code ) {
             proccessRequest( data, code );
             api.terminate();
         }, function ( error ) {

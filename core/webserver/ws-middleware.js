@@ -6,14 +6,14 @@ var ErrorClass = require( __dirname + '/../libs/errorClass' );
 var RendererClass = require( __dirname + '/../libs/rendererClass' );
 var loadApi = require( __dirname + '/../libs/loadApi' );
 
-module.exports = function () {
+module.exports = function ( paths ) {
 
     return function ( socket, req ) {
 
         var urlParts = url.parse( req.url.replace( /\.websocket$/, '' ), true );
 
-        var api = loadApi( urlParts.pathname, req.session );
-        var renderer = new RendererClass( api );
+        var api = loadApi( paths.apis, urlParts.pathname, req );
+        var renderer = new RendererClass( paths.renderers, api );
 
         var error = false;
         if ( !api ) {
@@ -33,7 +33,7 @@ module.exports = function () {
 
         socket.on( 'message', function ( message ) {
             req.body = message;
-            api._getData( req, function ( data ) {
+            api._getData( function ( data ) {
                 socket.send( renderer.render( data ) );
             }, function ( error ) {
                 socket.send( renderer.render( error.getMessage() ) );

@@ -1,6 +1,7 @@
 'use strict';
 
 var ErrorClass = require( __dirname + '/errorClass' );
+var utils = require( __dirname + '/../utils' );
 
 var schema = {
     defaultRenderer: function () {
@@ -23,28 +24,31 @@ var schema = {
     }
 };
 
-module.exports = function ( pathname ) {
+module.exports = function ( apisPath, pathname, request ) {
 
-    try {
-        var ApiClass = require( __dirname + '/../../api' + pathname );
-        for ( var prop in schema ) {
-            if ( schema.hasOwnProperty( prop ) ) {
-                ApiClass.prototype[ prop ] = schema[ prop ];
-            }
-        }
-        var instance = new ApiClass();
-        instance._getData = function ( request, callback, errorCallback ) {
-            if ( !instance.hasAccess( request ) ) {
-                errorCallback( new ErrorClass( 403 ) );
-                return;
-            }
-            instance.execute( request, function ( data, code ) {
-                callback( data, code || 200 );
-            }, errorCallback );
-        };
-        return instance;
-    } catch ( e ) {
+    var ApiClass = utils.getFile( pathname, [ apisPath, __dirname + '/../../api' ] );
+
+    if ( !ApiClass ) {
         return false;
     }
+
+    for ( var prop in schema ) {
+        if ( schema.hasOwnProperty( prop ) ) {
+            ApiClass.prototype[ prop ] = schema[ prop ];
+        }
+    }
+    ApiClass.prototype.Error = ErrorClass;
+    var instance = new ApiClass();
+    instance.request = request;
+    instance._getData = function ( callback, errorCallback ) {
+        if ( !instance.hasAccess( request ) ) {
+            errorCallback( new ErrorClass( 403 ) );
+            return;
+        }
+        instance.execute( function ( data, code ) {
+            callback( data, code || 200 );
+        }, errorCallback );
+    };
+    return instance;
 
 };
