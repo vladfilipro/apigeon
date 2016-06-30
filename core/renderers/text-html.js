@@ -1,15 +1,8 @@
 'use strict';
 
 module.exports = function ( data ) {
-    var output = '<table width="100%" border="1">';
-    for ( var key in data ) {
-        if ( data.hasOwnProperty( key ) ) {
-            output += '<tr>';
-            output += '<td>' + key + '</td>';
-            output += '<td>' + JSON.stringify( data[ key ] ) + '</td>';
-            output += '</tr>';
-        }
+    if ( [ 'string', 'number', 'null' ].indexOf( typeof data ) === -1 ) {
+        return '';
     }
-    output += '</table>';
-    return output;
+    return data.toString();
 };

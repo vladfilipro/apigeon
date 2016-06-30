@@ -22,14 +22,17 @@
         "express-ws": "2.0.0-rc.1",
 
         "aws-sdk": "*",
-        "mysql": "2.11.1",
-
+        "mysql": "2.11.1"
+    },
+    "devDependencies": {
         "rigs": "*",
         "rig-javascript": "*",
         "rig-unit-test": "*",
+        "chai": "3.5.0",
         "run-sequence": "1.2.2"
     },
     "scripts": {
-        "test": "npm outdated && ./node_modules/.bin/rigs && ./node_modules/.bin/gulp init && ./node_modules/.bin/gulp unit-test"
+        "start": "npm outdated && ./node_modules/.bin/rigs && ./node_modules/.bin/gulp init",
+        "test": "./node_modules/.bin/gulp test"
     }
 }

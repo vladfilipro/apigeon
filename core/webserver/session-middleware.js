@@ -13,9 +13,9 @@ var getSessionIdFromHeader = function ( header ) {
     return sessionId;
 };
 
-module.exports = function ( paths, config ) {
+module.exports = function ( pathDrivers, config ) {
     return function ( req, res, next ) {
-        var session = new SessionClass( paths.drivers, config );
+        var session = new SessionClass( pathDrivers, config );
 
         var headerSessionId = getSessionIdFromHeader( req.get( 'Session-Id' ) );
 

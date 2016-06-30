@@ -24,7 +24,7 @@ module.exports = {
             taskname: 'rig-javascript__jshint',
             src: [ __dirname + '/core/**/*.js' ]
         },
-        'unit-test': {
+        'test': {
             taskname: 'rig-unit-test__mocha',
             src: [ './core/**/*.js' ],
             tests: './spec/**/*.js',

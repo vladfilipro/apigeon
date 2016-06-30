@@ -9,19 +9,19 @@ function Apigeon( app, server, paths ) {
 
     this.paths = utils.merge( {}, {
         apis: __dirname + '/../../../api',
-        renderers: __dirname + '/../../../renderers',
-        drivers: __dirname + '/../../../drivers'
+        renderers: null,
+        drivers: null
     }, paths );
-
-    return app;
 
 }
 
 Apigeon.prototype.session = function ( config ) {
-    return require( __dirname + '/webserver/session-middleware' )( this.paths.drivers, config );
+    var drivers = this.paths.drivers;
+    return require( __dirname + '/webserver/session-middleware' )( drivers, config );
 };
 Apigeon.prototype.logs = function ( config ) {
-    return require( __dirname + '/webserver/logs-middleware' )( this.paths.drivers, config );
+    var drivers = this.paths.drivers;
+    return require( __dirname + '/webserver/logs-middleware' )( drivers, config );
 };
 Apigeon.prototype.rest = function () {
     return require( __dirname + '/webserver/rest-middleware' )( this.paths );

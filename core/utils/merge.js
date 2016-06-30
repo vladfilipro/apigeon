@@ -21,7 +21,7 @@ module.exports = function () {
     var target = arguments[ 0 ];
     var extensions = [];
     for ( var params in arguments ) {
-        if ( arguments.hasOwnProperty( params ) && params !== 0 ) {
+        if ( arguments.hasOwnProperty( params ) && params !== 0 && arguments[ params ] ) {
             extensions.push( arguments[ params ] );
         }
     }

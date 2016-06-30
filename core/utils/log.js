@@ -1,5 +1,5 @@
 'use strict';
 
 module.exports = function () {
-    console.log.apply( arguments );
+    console.log.apply( this, arguments );
 };

@@ -1,15 +1,12 @@
 'use strict';
 
 var zeroFill = function ( number, digits ) {
-    if ( digits ) {
-        var result = '';
-        for ( var i = 1; i <= digits; i++ ) {
-            result = '' + ( number % 10 ) + result;
-            number = Math.floor( number / 10 );
-        }
-        number = result;
+    var result = '';
+    for ( var i = 1; i <= digits; i++ ) {
+        result = '' + ( number % 10 ) + result;
+        number = Math.floor( number / 10 );
     }
-    return number;
+    return result;
 };
 
 var formatDate = function ( date ) {
