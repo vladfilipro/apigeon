@@ -6,16 +6,15 @@ module.exports = function ( db ) {
 
     var query = {
         command: '',
-        columns: '',
+        columns: [],
         table: '',
-        condition: '',
+        where: '',
         attrs: {},
-        filter: '',
         orderColumn: '',
         orderDirection: '',
         limit: '',
         insertData: {},
-        setExpression: '',
+        updateData: {},
         keys: {}
     };
 
@@ -24,13 +23,11 @@ module.exports = function ( db ) {
             return {
                 columns: query.columns,
                 table: query.table,
-                keys: query.keys,
-                condition: query.condition,
-                attrs: query.attrs,
-                filter: query.filter,
+                where: query.where,
                 orderColumn: query.orderColumn,
                 orderDirection: query.orderDirection,
-                limit: query.limit
+                limit: query.limit,
+                attrs: query.attrs
             };
         },
         insert: function () {
@@ -42,19 +39,32 @@ module.exports = function ( db ) {
         update: function () {
             return {
                 table: query.table,
-                values: query.setExpression,
-                keys: query.keys,
-                condition: query.condition,
+                values: query.updateData,
+                where: query.where,
                 attrs: query.attrs
             };
         },
         delete: function () {
             return {
                 table: query.table,
-                keys: query.keys,
-                condition: query.condition,
+                where: query.where,
                 attrs: query.attrs
             };
+        }
+    };
+
+    var _expectation = function ( value, type ) {
+        switch ( type ) {
+            case 'array':
+                return Array.isArray( value );
+            case 'function':
+                return ( typeof value === 'function' );
+            case 'number':
+                return ( typeof value === 'number' );
+            case 'string':
+                return ( typeof value === 'string' );
+            case 'object':
+                return ( typeof value === 'object' );
         }
     };
 
@@ -62,19 +72,28 @@ module.exports = function ( db ) {
         db[ query.command.toLowerCase() ]( parameters[ query.command.toLowerCase() ](), cb );
     };
 
-    this.select = function ( cols ) {
+    this.select = function ( columns ) {
+        if ( !_expectation( columns, 'array' ) ) {
+            throw 'Select statement expects an array of columns';
+        }
         query.command = 'SELECT';
-        query.cols = cols;
+        query.columns = columns;
         return _self;
     };
     this.insert = function ( values ) {
+        if ( !_expectation( values, 'object' ) ) {
+            throw 'Insert statement expects an object containing values';
+        }
         query.command = 'INSERT';
-        query.insertData = values || '{}';
+        query.insertData = values;
         return _self;
     };
-    this.update = function ( setExpression ) {
+    this.update = function ( updateData ) {
+        if ( !_expectation( updateData, 'object' ) ) {
+            throw 'Undate statement expects an object containing values';
+        }
         query.command = 'UPDATE';
-        query.setExpression = setExpression;
+        query.updateData = updateData;
         return _self;
     };
     this.delete = function () {
@@ -85,25 +104,19 @@ module.exports = function ( db ) {
         query.table = table;
         return _self;
     };
-    this.setKeys = function ( keys ) {
-        query.keys = keys;
-        return _self;
-    };
-    this.condition = function ( condition ) {
-        query.condition = condition;
+    this.where = function ( where ) {
+        query.where = where;
         return _self;
     };
     this.attrs = function ( attrs ) {
+        if ( !_expectation( attrs, 'object' ) ) {
+            throw 'Attrs method expects an object containing values';
+        }
         query.attrs = attrs;
         return _self;
     };
-    this.filter = function ( filter, attrs ) {
-        query.filter = filter;
-        query.filterAttr = attrs;
-        return _self;
-    };
-    this.order = function ( col, direction ) {
-        query.orderColumn = col;
+    this.order = function ( column, direction ) {
+        query.orderColumn = column;
         query.orderDirection = direction;
         return _self;
     };

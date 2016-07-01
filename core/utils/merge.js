@@ -2,15 +2,13 @@
 
 var extend = function ( a, b ) {
     if ( typeof b === 'object' ) {
-        for ( var prop in b ) {
-            if ( b.hasOwnProperty( prop ) ) {
-                if ( typeof a[ prop ] === 'object' ) {
-                    a[ prop ] = extend( a[ prop ], b[ prop ] );
-                } else {
-                    a[ prop ] = b[ prop ];
-                }
+        Object.keys( b ).forEach( function ( prop ) {
+            if ( typeof a[ prop ] === 'object' ) {
+                a[ prop ] = extend( a[ prop ], b[ prop ] );
+            } else {
+                a[ prop ] = b[ prop ];
             }
-        }
+        } );
     } else {
         a = b;
     }
