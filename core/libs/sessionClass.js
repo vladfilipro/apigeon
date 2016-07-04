@@ -1,7 +1,6 @@
 'use strict';
 
 var utils = require( __dirname + '/../utils' );
-var QueryBuilder = require( __dirname + '/queryBuilder' );
 
 module.exports = function ( driversPath, config ) {
 
@@ -10,7 +9,6 @@ module.exports = function ( driversPath, config ) {
     var dbDriver = utils.getFile( config.driver, [ driversPath, __dirname + '/../drivers' ] );
 
     var sessionId;
-    var created;
     var sessionData = {};
 
     var createSessionEntry = function ( sId, cb ) {
@@ -21,54 +19,41 @@ module.exports = function ( driversPath, config ) {
         }
 
         var values = {
-            'SessionID': sId,
-            'Created': utils.date.datetime(),
-            'SessionData': {},
-            'Updated': utils.date.datetime()
+            'created': utils.date.datetime(),
+            'data': {},
+            'updated': utils.date.datetime()
         };
-        var qb = new QueryBuilder( dbDriver );
-        qb.table( config.table );
-        qb
-            .insert( values )
-            .execute( function ( err ) {
-                if ( err ) {
-                    utils.log( 'Session creation error: ', err );
-                    cb( false );
-                    return;
-                }
-                created = values.Created;
-                sessionId = sId;
-                cb( true );
-            } );
+
+        dbDriver.insert( config.table, sId, values, function ( err ) {
+            if ( err ) {
+                utils.log( 'Session creation error: ', err );
+                cb( false );
+                return;
+            }
+            sessionId = sId;
+            cb( true );
+        } );
+
     };
 
-    var saveSession = function ( sId, sCreated, sData, cb ) {
+    var saveSession = function ( sId, sData, cb ) {
 
-        if ( !sId || !sCreated ) {
+        if ( !sId ) {
             cb( false );
             return;
         }
 
-        var qb = new QueryBuilder( dbDriver );
-        qb.table( config.table );
-        qb
-            .update( 'set SessionData = :sessionData, Updated = :updated' )
-            .setKeys( {
-                'SessionID': sId,
-                'Created': sCreated
-            } )
-            .attrs( {
-                ':sessionData': sData,
-                ':updated': utils.date.datetime()
-            } )
-            .execute( function ( err ) {
-                if ( err ) {
-                    utils.log( 'Error saving session data: ', err );
-                    cb( false );
-                    return;
-                }
-                cb( true );
-            } );
+        sData.updated = utils.date.datetime();
+
+        dbDriver.update( config.table, sId, sData, function ( err ) {
+            if ( err ) {
+                utils.log( 'Error saving session data: ', err );
+                cb( false );
+                return;
+            }
+            cb( true );
+        } );
+
     };
 
     var findSession = function ( sId, cb ) {
@@ -78,31 +63,23 @@ module.exports = function ( driversPath, config ) {
             return;
         }
 
-        var qb = new QueryBuilder( dbDriver );
-        qb.table( config.table );
-        qb
-            .select()
-            .condition( 'SessionID = :sessionId' )
-            .attrs( {
-                ':sessionId': sId
-            } )
-            .execute( function ( err, data ) {
-                if ( err ) {
-                    utils.log( 'Error retrieving session ', err );
-                    cb( false );
-                    return;
-                }
-                if ( data.length === 0 ) {
+        dbDriver.select( config.table, sId, function ( err, data ) {
+            if ( err ) {
+                utils.log( 'Error retrieving session ', err );
+                cb( false );
+                return;
+            }
+            if ( Object.keys( data ).length === 0 ) {
 
-                    // Separating an error from an unexisting session
-                    cb( false );
-                    return;
-                }
-                sessionId = sId;
-                sessionData = data[ 0 ].SessionData;
-                created = data[ 0 ].Created;
-                cb( true );
-            } );
+                // Separating an error from an unexisting session
+                cb( false );
+                return;
+            }
+            sessionId = sId;
+            sessionData = data.data;
+            cb( true );
+        } );
+
     };
 
     this.start = function ( requestedSessionId ) {
@@ -125,7 +102,7 @@ module.exports = function ( driversPath, config ) {
 
     this.update = function () {
         var promise = utils.q.promise();
-        saveSession( sessionId, created, sessionData, function ( saveSessionSuccess ) {
+        saveSession( sessionId, sessionData, function ( saveSessionSuccess ) {
             if ( saveSessionSuccess ) {
                 promise.resolve( true );
             } else {

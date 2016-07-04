@@ -8,7 +8,7 @@ module.exports = function ( pathDrivers, config ) {
 
         // Initialize logging
         var logs = new LogsClass( pathDrivers, config );
-        logs.set( {
+        logs.start( {
             id: utils.uniqueId(),
             ip: req.ip,
             route: req.route,
