@@ -32,11 +32,10 @@ module.exports = function ( apisPath, pathname, request ) {
         return false;
     }
 
-    for ( var prop in schema ) {
-        if ( schema.hasOwnProperty( prop ) ) {
-            ApiClass.prototype[ prop ] = schema[ prop ];
-        }
-    }
+    Object.keys( schema ).forEach( function ( prop ) {
+        ApiClass.prototype[ prop ] = schema[ prop ];
+    } );
+
     ApiClass.prototype.Error = ErrorClass;
     var instance = new ApiClass();
     instance.request = request;
@@ -45,7 +44,7 @@ module.exports = function ( apisPath, pathname, request ) {
             errorCallback( new ErrorClass( 403 ) );
             return;
         }
-        instance.execute( function ( data, code ) {
+        instance.execute( request, function ( data, code ) {
             callback( data, code || 200 );
         }, errorCallback );
     };

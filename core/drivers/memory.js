@@ -13,7 +13,7 @@ module.exports = {
 
         // We do not want to keep references, we want string values.
         Object.keys( data ).forEach( function ( key ) {
-            record[ key ] = JSON.stringify( data[ key ] );
+            record[ key ] = ( typeof data[ key ] === 'object' ) ? JSON.stringify( data[ key ] ) : data[ key ];
         } );
 
         global[ table ][ primary ] = record;
@@ -29,7 +29,7 @@ module.exports = {
 
         var record = global[ table ][ primary ];
         Object.keys( data ).forEach( function ( key ) {
-            record[ key ] = JSON.stringify( data[ key ] );
+            record[ key ] = ( typeof data[ key ] === 'object' ) ? JSON.stringify( data[ key ] ) : data[ key ];
         } );
 
         cb( null, 'Values updated for key ' + primary );

@@ -15,7 +15,8 @@ module.exports = function Logs( driversPath, config ) {
     };
 
     this.log = function ( info, cb ) {
-        dbDriver.insert( 'logs', utils.uniqueId(), utils.merge( {}, data, info ), function ( err ) {
+        var id = utils.uniqueId();
+        dbDriver.insert( config.table, id, utils.merge( {}, data, info ), function ( err ) {
             if ( err ) {
                 utils.log( 'Log creation error: ', err );
                 if ( typeof cb === 'function' ) {
@@ -24,7 +25,7 @@ module.exports = function Logs( driversPath, config ) {
                 return;
             }
             if ( typeof cb === 'function' ) {
-                cb( true );
+                cb( id );
             }
         } );
     };

@@ -18,18 +18,15 @@
         "url": "https://github.com/vladfilipro/apigeon/issues"
     },
     "dependencies": {
-        "express": "4.14.0",
-        "express-ws": "2.0.0-rc.1",
-
-        "aws-sdk": "*",
-        "mysql": "2.11.1"
+        "express-ws": "2.0.0-rc.1"
     },
     "devDependencies": {
         "rigs": "*",
         "rig-javascript": "*",
         "rig-unit-test": "*",
         "chai": "3.5.0",
-        "run-sequence": "1.2.2"
+        "run-sequence": "1.2.2",
+        "express": "4.14.0"
     },
     "scripts": {
         "start": "npm outdated && ./node_modules/.bin/rigs && ./node_modules/.bin/gulp init",
