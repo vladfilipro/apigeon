@@ -49,8 +49,8 @@ describe( 'Apigeon: /core/drivers/memory.js', function () {
     it( ' should create the table if it doesn\'t exist on update', function ( done ) {
         delete global[ table ];
         victim.update( table, 1, {}, function ( e, data ) {
-            expect( e ).to.not.be.null;
-            expect( data ).to.be.null;
+            expect( e ).to.be.null;
+            expect( data ).to.not.be.null;
             expect( global[ table ] ).to.not.be.undefined;
             done();
         } );
@@ -59,8 +59,8 @@ describe( 'Apigeon: /core/drivers/memory.js', function () {
     it( ' should create the table if it doesn\'t exist on select', function ( done ) {
         delete global[ table ];
         victim.select( table, 1, function ( e, data ) {
-            expect( e ).to.not.be.null;
-            expect( data ).to.be.null;
+            expect( e ).to.be.null;
+            expect( data ).to.not.be.null;
             expect( global[ table ] ).to.not.be.undefined;
             done();
         } );
@@ -69,8 +69,8 @@ describe( 'Apigeon: /core/drivers/memory.js', function () {
     it( ' should create the table if it doesn\'t exist on delete', function ( done ) {
         delete global[ table ];
         victim.delete( table, 1, function ( e, data ) {
-            expect( e ).to.not.be.null;
-            expect( data ).to.be.null;
+            expect( e ).to.be.null;
+            expect( data ).to.not.be.null;
             expect( global[ table ] ).to.not.be.undefined;
             done();
         } );
@@ -80,18 +80,19 @@ describe( 'Apigeon: /core/drivers/memory.js', function () {
         victim.select( table, 1, function ( e, data ) {
             expect( e ).to.be.null;
             expect( data ).to.have.property( 'a', 'a' );
-            expect( data ).to.have.property( 'b', JSON.stringify( {
+            expect( data ).to.have.property( 'b' );
+            expect( data.b ).to.eql( {
                 'c': 1
-            } ) );
+            } );
             expect( data ).to.have.property( 'd', 1 );
             done();
         } );
     } );
 
-    it( ' should return an error when calling select on an inexistant primary', function ( done ) {
+    it( ' should not return an error when calling select on an inexistant primary', function ( done ) {
         victim.select( table, 2, function ( e, data ) {
-            expect( e ).to.not.be.null;
-            expect( data ).to.be.null;
+            expect( e ).to.be.null;
+            expect( data ).to.not.be.null;
             done();
         } );
     } );
@@ -107,9 +108,10 @@ describe( 'Apigeon: /core/drivers/memory.js', function () {
             victim.select( table, 2, function ( e, data ) {
                 expect( e ).to.be.null;
                 expect( data ).to.have.property( 'a', 'a' );
-                expect( data ).to.have.property( 'b', JSON.stringify( {
+                expect( data ).to.have.property( 'b' );
+                expect( data.b ).to.eql( {
                     'c': 1
-                } ) );
+                } );
                 expect( data ).to.have.property( 'd', 1 );
                 done();
             } );
@@ -133,9 +135,10 @@ describe( 'Apigeon: /core/drivers/memory.js', function () {
             victim.select( table, 1, function ( e, data ) {
                 expect( e ).to.be.null;
                 expect( data ).to.have.property( 'a', 'b' );
-                expect( data ).to.have.property( 'b', JSON.stringify( {
+                expect( data ).to.have.property( 'b' );
+                expect( data.b ).to.eql( {
                     'c': 1
-                } ) );
+                } );
                 expect( data ).to.have.property( 'd', 1 );
                 done();
             } );
@@ -150,12 +153,14 @@ describe( 'Apigeon: /core/drivers/memory.js', function () {
         }, function () {
             victim.select( table, 1, function ( e, data ) {
                 expect( e ).to.be.null;
-                expect( data ).to.have.property( 'a', JSON.stringify( {
+                expect( data ).to.have.property( 'a' );
+                expect( data.a ).to.eql( {
                     'e': 1
-                } ) );
-                expect( data ).to.have.property( 'b', JSON.stringify( {
+                } );
+                expect( data ).to.have.property( 'b' );
+                expect( data.b ).to.eql( {
                     'c': 1
-                } ) );
+                } );
                 expect( data ).to.have.property( 'd', 1 );
                 done();
             } );
@@ -166,8 +171,8 @@ describe( 'Apigeon: /core/drivers/memory.js', function () {
         victim.update( table, 10, {
             'a': 'b'
         }, function ( e, data ) {
-            expect( e ).to.not.be.null;
-            expect( data ).to.be.null;
+            expect( e ).to.be.null;
+            expect( data ).to.not.be.null;
             done();
         } );
     } );
@@ -175,8 +180,8 @@ describe( 'Apigeon: /core/drivers/memory.js', function () {
     it( ' should delete an object when calling delete', function ( done ) {
         victim.delete( table, 1, function () {
             victim.select( table, 1, function ( e, data ) {
-                expect( e ).to.not.be.null;
-                expect( data ).to.be.null;
+                expect( e ).to.be.null;
+                expect( data ).to.not.be.null;
                 done();
             } );
         } );
@@ -184,8 +189,8 @@ describe( 'Apigeon: /core/drivers/memory.js', function () {
 
     it( ' should return error when trying to delete inexistant primary', function ( done ) {
         victim.delete( table, 5, function ( e, data ) {
-            expect( e ).to.not.be.null;
-            expect( data ).to.be.null;
+            expect( e ).to.be.null;
+            expect( data ).to.not.be.null;
             done();
         } );
     } );

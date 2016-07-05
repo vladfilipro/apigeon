@@ -13,12 +13,8 @@ module.exports = function ( driversPath, config ) {
 
     var createSessionEntry = function ( sId, cb ) {
 
-        if ( !sId ) {
-            cb( false );
-            return;
-        }
-
         var values = {
+            'session_id': sId,
             'created': utils.date.datetime(),
             'data': {},
             'updated': utils.date.datetime()
@@ -43,6 +39,7 @@ module.exports = function ( driversPath, config ) {
             return;
         }
 
+        sData[ 'session_id' ] = sId;
         sData.updated = utils.date.datetime();
 
         dbDriver.update( config.table, sId, sData, function ( err ) {
@@ -69,7 +66,7 @@ module.exports = function ( driversPath, config ) {
                 cb( false );
                 return;
             }
-            if ( Object.keys( data ).length === 0 ) {
+            if ( typeof data !== 'object' || Object.keys( data ).length === 0 ) {
 
                 // Separating an error from an unexisting session
                 cb( false );
@@ -102,7 +99,9 @@ module.exports = function ( driversPath, config ) {
 
     this.update = function () {
         var promise = utils.q.promise();
-        saveSession( sessionId, sessionData, function ( saveSessionSuccess ) {
+        saveSession( sessionId, {
+            data: sessionData
+        }, function ( saveSessionSuccess ) {
             if ( saveSessionSuccess ) {
                 promise.resolve( true );
             } else {

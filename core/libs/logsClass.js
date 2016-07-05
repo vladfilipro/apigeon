@@ -14,19 +14,21 @@ module.exports = function Logs( driversPath, config ) {
         }
     };
 
+    var respond = function ( cb, outcome ) {
+        if ( typeof cb === 'function' ) {
+            cb( outcome );
+        }
+    };
+
     this.log = function ( info, cb ) {
         var id = utils.uniqueId();
         dbDriver.insert( config.table, id, utils.merge( {}, data, info ), function ( err ) {
             if ( err ) {
                 utils.log( 'Log creation error: ', err );
-                if ( typeof cb === 'function' ) {
-                    cb( false );
-                }
+                respond( cb, false );
                 return;
             }
-            if ( typeof cb === 'function' ) {
-                cb( id );
-            }
+            respond( cb, id );
         } );
     };
 

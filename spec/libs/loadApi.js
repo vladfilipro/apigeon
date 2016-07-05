@@ -26,17 +26,11 @@ describe( 'Apigeon: /core/libs/loadApi.js', function () {
         done();
     } );
 
-    it( 'should return an instance of the Api', function ( done ) {
-        var api = victim( apiFolder, '/empty', {} );
-        expect( api ).to.be.an.instanceof( require( apiFolder + '/empty' ) );
-        done();
-    } );
-
     it( 'should return an object with methods', function ( done ) {
         var api = victim( apiFolder, '/empty', {
             'request': true
         } );
-        expect( api ).to.respondTo( 'defaultRenderer' );
+        expect( api ).to.respondTo( 'getAcceptedRenderers' );
         expect( api ).to.respondTo( 'hasAccess' );
         expect( api ).to.respondTo( 'methodAllowed' );
         expect( api ).to.respondTo( 'protocolAllowed' );
@@ -50,9 +44,9 @@ describe( 'Apigeon: /core/libs/loadApi.js', function () {
         done();
     } );
 
-    it( 'method defaultRenderer should return `application/json` by default', function ( done ) {
+    it( 'method getAcceptedRenderers should return true by default', function ( done ) {
         var api = victim( apiFolder, '/empty', {} );
-        expect( api.defaultRenderer() ).to.equal( 'application/json' );
+        expect( api.getAcceptedRenderers() ).to.equal( true );
         done();
     } );
 

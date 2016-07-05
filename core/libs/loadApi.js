@@ -4,8 +4,8 @@ var ErrorClass = require( __dirname + '/errorClass' );
 var utils = require( __dirname + '/../utils' );
 
 var schema = {
-    defaultRenderer: function () {
-        return 'application/json';
+    getAcceptedRenderers: function () {
+        return true;
     },
     hasAccess: function () { // request
         return true;

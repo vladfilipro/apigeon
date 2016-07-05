@@ -4,21 +4,15 @@ var expect = require( 'chai' ).expect;
 
 var Victim = require( './../../core/libs/logsClass.js' );
 var utils = require( ' ./../../core/utils' );
+var path = require( 'path' );
 
 describe( 'Apigeon: /core/libs/logsClass.js', function () {
     var config = {
         table: 'logs',
         driver: 'memory'
     };
-    var driversPath = './../../core/drivers';
-    var dbDriver;
-    var logs;
-
-    beforeEach( function ( done ) {
-        dbDriver = utils.getFile( config.driver, [ driversPath, './../../core/drivers' ] );
-        logs = new Victim( driversPath, config );
-        done();
-    } );
+    var driversPath = path.dirname( require.resolve( './../../core/drivers/memory' ) );
+    var fakeDriversPath = path.dirname( require.resolve( './fakeDrivers/memory-fail' ) );
 
     it( 'should be a function with 2 parameters', function ( done ) {
         expect( Victim ).to.be.a( 'function' );
@@ -40,6 +34,8 @@ describe( 'Apigeon: /core/libs/logsClass.js', function () {
         var data = {
             'key': 'value'
         };
+        var dbDriver = utils.getFile( config.driver, [ fakeDriversPath, driversPath ] );
+        var logs = new Victim( driversPath, config );
         logs.log( data, function ( id ) {
             expect( typeof id ).to.equal( 'string' );
             dbDriver.select( config.table, id, function ( e, res ) {
@@ -54,6 +50,8 @@ describe( 'Apigeon: /core/libs/logsClass.js', function () {
         var data = {
             'key': 'value'
         };
+        var dbDriver = utils.getFile( config.driver, [ fakeDriversPath, driversPath ] );
+        var logs = new Victim( driversPath, config );
         logs.start( {
             'start': true
         } );
@@ -74,6 +72,8 @@ describe( 'Apigeon: /core/libs/logsClass.js', function () {
         var data = {
             'key': 'value'
         };
+        var dbDriver = utils.getFile( config.driver, [ fakeDriversPath, driversPath ] );
+        var logs = new Victim( driversPath, config );
         logs.start( 'random string' );
         logs.log( data, function ( id ) {
             expect( typeof id ).to.equal( 'string' );
@@ -88,8 +88,8 @@ describe( 'Apigeon: /core/libs/logsClass.js', function () {
     } );
 
     it( 'should use the default driver if not found in paths', function ( done ) {
-        dbDriver = utils.getFile( config.driver, [ '', './../../core/drivers' ] );
-        logs = new Victim( '', config );
+        var dbDriver = utils.getFile( config.driver, [ '', driversPath ] );
+        var logs = new Victim( '', config );
         var data = {
             'key': 'value'
         };
@@ -107,6 +107,10 @@ describe( 'Apigeon: /core/libs/logsClass.js', function () {
     } );
 
     it( 'should not throw an error if log callback is not set', function ( done ) {
+        var logs = new Victim( fakeDriversPath, {
+            table: 'logs',
+            driver: 'memory-fail'
+        } );
         var data = {
             'key': 'value'
         };
@@ -115,9 +119,10 @@ describe( 'Apigeon: /core/libs/logsClass.js', function () {
     } );
 
     it( 'should return false as a parameter for the callback if log save failed', function ( done ) {
-        var path = require( 'path' );
-        logs = new Victim( path.dirname( require.resolve( './fakeDrivers/memory' ) ), config );
-
+        var logs = new Victim( fakeDriversPath, {
+            table: 'logs',
+            driver: 'memory-fail'
+        } );
         logs.log( {}, function ( res ) {
             expect( res ).to.equal( false );
             done();
@@ -126,8 +131,10 @@ describe( 'Apigeon: /core/libs/logsClass.js', function () {
     } );
 
     it( 'should not throw an error if log callback is not set and insert failed', function ( done ) {
-        var path = require( 'path' );
-        logs = new Victim( path.dirname( require.resolve( './fakeDrivers/memory' ) ), config );
+        var logs = new Victim( fakeDriversPath, {
+            table: 'logs',
+            driver: 'memory-fail'
+        } );
         expect( logs.log( {} ) ).to.equal( undefined );
         done();
     } );

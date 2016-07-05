@@ -19,26 +19,14 @@ module.exports = {
         global[ table ][ primary ] = record;
         cb( null, 'Values inserted into ' + table );
     },
-    update: function ( table, primary, data, cb ) {
-        global[ table ] = global[ table ] || {};
-
-        if ( !global[ table ][ primary ] ) {
-            cb( null, 'No updated values' );
-            return;
-        }
-
-        var record = global[ table ][ primary ];
-        Object.keys( data ).forEach( function ( key ) {
-            record[ key ] = ( typeof data[ key ] === 'object' ) ? JSON.parse( JSON.stringify( data[ key ] ) ) : data[ key ];
-        } );
-
-        cb( null, 'Values updated for key ' + primary );
+    'update': function ( table, id, data, cb ) {
+        cb( 'error', null );
     },
     select: function ( table, primary, cb ) {
         global[ table ] = global[ table ] || {};
 
         if ( !global[ table ][ primary ] ) {
-            cb( null, 'Primary key does not exist' );
+            cb( 'Primary key does not exist', null );
             return;
         }
 
@@ -48,7 +36,7 @@ module.exports = {
         global[ table ] = global[ table ] || {};
 
         if ( !global[ table ][ primary ] ) {
-            cb( null, 'Primary key does not exist' );
+            cb( 'Primary key does not exist', null );
             return;
         }
 

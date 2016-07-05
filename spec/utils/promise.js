@@ -130,6 +130,22 @@ describe( 'Apigeon: /core/utils/promise.js -> promise', function () {
         promise.resolve( 'yes' );
     } );
 
+    it( 'should call functions sent to then, success when resolved (before result returned), and not error', function ( done ) {
+        var promise = victim.promise();
+        promise.resolve( 'yes' );
+        promise.result.then( function ( e, data ) {
+            expect( e ).to.equal( null );
+            expect( data ).to.equal( 'yes' );
+            done();
+        } );
+        promise.result.success( function ( data ) {
+            expect( data ).to.equal( 'yes' );
+        } );
+        promise.result.error( function ( e ) {
+            expect( e ).to.equal( 'this should not be called' );
+        } );
+    } );
+
     it( 'should call functions sent to then, error when rejected, and not success', function ( done ) {
         var promise = victim.promise();
         promise.result.then( function ( e, data ) {
@@ -145,4 +161,21 @@ describe( 'Apigeon: /core/utils/promise.js -> promise', function () {
         } );
         promise.reject( 'err' );
     } );
+
+    it( 'should call functions sent to then, error when rejected (before result returned), and not success', function ( done ) {
+        var promise = victim.promise();
+        promise.reject( 'err' );
+        promise.result.then( function ( e, data ) {
+            expect( e ).to.equal( 'err' );
+            expect( data ).to.equal( null );
+            done();
+        } );
+        promise.result.success( function ( data ) {
+            expect( data ).to.equal( 'this should not be called' );
+        } );
+        promise.result.error( function ( e ) {
+            expect( e ).to.equal( 'err' );
+        } );
+    } );
+
 } );
