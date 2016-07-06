@@ -26,7 +26,9 @@
         "rig-unit-test": "*",
         "chai": "3.5.0",
         "run-sequence": "1.2.2",
-        "express": "4.14.0"
+        "express": "4.14.0",
+        "supertest": "1.2.0",
+        "cookie-parser": "1.4.3"
     },
     "scripts": {
         "start": "npm outdated && ./node_modules/.bin/rigs && ./node_modules/.bin/gulp init",

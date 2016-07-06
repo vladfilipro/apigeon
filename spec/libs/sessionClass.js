@@ -45,7 +45,7 @@ describe( 'Apigeon: /core/libs/sessionClass.js', function () {
     } );
 
     it( 'should return the session id when calling getSessionId', function ( done ) {
-        var session = new Victim( driversPath, config );
+        var session = new Victim( '', config );
         session.start( 1 ).then( function () {
             expect( session.getSessionId() ).to.be.a( 'string' );
             done();

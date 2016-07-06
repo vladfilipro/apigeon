@@ -36,7 +36,7 @@ module.exports = {
             },
             reports: {
                 dir: './coverage',
-                reporters: [ 'text' ],
+                reporters: [ 'text', 'lcov' ],
                 reportOpts: {
                     dir: './coverage'
                 }
