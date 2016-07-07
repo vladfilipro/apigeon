@@ -12,9 +12,10 @@ module.exports = function ( paths ) {
 
     return function ( socket, req ) {
 
-        var urlParts = url.parse( req.url.replace( /\.websocket$/, '' ), true );
+        var urlParts = url.parse( req.url.replace( /\/\.websocket$/, '' ), true );
 
         var api = loadApi( paths.apis, urlParts.pathname, req );
+
         var renderer = new RendererClass( paths.renderers, api );
 
         var error = false;
@@ -29,7 +30,8 @@ module.exports = function ( paths ) {
             }
         }
         if ( error ) {
-            req.reject( error.getCode(), renderer.render( error.getMessage() ) );
+            socket.send( renderer.render( error.getMessage() ) );
+            socket.close();
             return;
         }
 

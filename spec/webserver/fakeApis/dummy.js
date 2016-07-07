@@ -6,7 +6,7 @@ module.exports = function () {
     var fail = new ErrorClass( 500 );
 
     this.execute = function ( req, cb, ecb ) {
-        if ( req.query.bad ) {
+        if ( req.query.bad || req.body === 'bad' ) {
             ecb( fail );
             return;
         }
