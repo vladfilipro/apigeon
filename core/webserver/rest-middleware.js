@@ -8,12 +8,15 @@ var loadApi = require( __dirname + '/../libs/loadApi' );
 
 module.exports = function ( paths ) {
 
+    paths = paths || {};
+
     return function ( req, res ) {
 
         var urlParts = url.parse( req.url, true );
 
-        var api = loadApi( paths.apis, urlParts.pathname, req );
-        var renderer = new RendererClass( paths.renderers, api, req.get( 'Accept' ) );
+        var api = loadApi( paths.apis || '', urlParts.pathname, req );
+
+        var renderer = new RendererClass( paths.renderers || '', api, req.get( 'Accept' ) );
 
         res.header( 'Content-type', renderer.contentType );
 

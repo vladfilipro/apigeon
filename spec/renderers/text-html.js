@@ -14,7 +14,7 @@ describe( 'Apigeon: /core/renderers/text-html.js', function () {
 
     it( 'should return a string', function ( done ) {
         expect( victim( 'untouched text' ) ).to.equal( 'untouched text' );
-        expect( victim( {} ) ).to.equal( '' );
+        expect( victim( {} ) ).to.equal( '{}' );
         expect( victim( undefined ) ).to.equal( '' );
         done();
     } );

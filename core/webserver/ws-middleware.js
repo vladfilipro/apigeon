@@ -8,6 +8,8 @@ var loadApi = require( __dirname + '/../libs/loadApi' );
 
 module.exports = function ( paths ) {
 
+    paths = paths || {};
+
     return function ( socket, req ) {
 
         var urlParts = url.parse( req.url.replace( /\.websocket$/, '' ), true );
