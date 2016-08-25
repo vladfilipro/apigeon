@@ -45,6 +45,44 @@ describe( 'Apigeon: /core/webserver/session-middleware.js', function () {
         } );
     } );
 
+    it( 'should work with no config object specified', function ( done ) {
+        var app = express();
+        app.use( victim( null ) );
+        app.get( '/', function ( req, res ) {
+            expect( req.session ).to.be.an.instanceof( SessionClass );
+            res.end( '' );
+        } );
+        var instance = app.listen( '9999', function () {
+            request( instance )
+                .get( '/' )
+                .expect( 200 )
+                .end( function ( err, res ) {
+                    expect( err ).to.equal( null );
+                    expect( res.text ).to.equal( '' );
+                    instance.close( done );
+                } );
+        } );
+    } );
+
+    it( 'should work with no table specified', function ( done ) {
+        var app = express();
+        app.use( victim( null, {} ) );
+        app.get( '/', function ( req, res ) {
+            expect( req.session ).to.be.an.instanceof( SessionClass );
+            res.end( '' );
+        } );
+        var instance = app.listen( '9999', function () {
+            request( instance )
+                .get( '/' )
+                .expect( 200 )
+                .end( function ( err, res ) {
+                    expect( err ).to.equal( null );
+                    expect( res.text ).to.equal( '' );
+                    instance.close( done );
+                } );
+        } );
+    } );
+
     it( 'should retrieve a previous session by passing session id in the query string', function ( done ) {
         var startTestCase = function ( sid ) {
             var app = express();

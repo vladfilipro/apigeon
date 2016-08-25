@@ -6,6 +6,10 @@ module.exports = function Logs( driversPath, config ) {
 
     var data = {};
 
+    config = config || {};
+    config.driver = config.driver || 'memory';
+    config.table = config.table || 'logs';
+
     var dbDriver = utils.getFile( config.driver, [ driversPath, __dirname + '/../drivers' ] );
 
     this.start = function ( newData ) {

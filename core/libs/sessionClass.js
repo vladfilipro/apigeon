@@ -6,6 +6,10 @@ module.exports = function ( driversPath, config ) {
 
     var _self = this;
 
+    config = config || {};
+    config.driver = config.driver || 'memory';
+    config.table = config.table || 'session';
+
     var dbDriver = utils.getFile( config.driver, [ driversPath, __dirname + '/../drivers' ] );
 
     var sessionId;
