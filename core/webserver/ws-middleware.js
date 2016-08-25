@@ -1,52 +1,28 @@
 'use strict';
 
-var url = require( 'url' );
+var WebSocketServer = require( 'ws' ).Server;
 
-var ErrorClass = require( __dirname + '/../libs/errorClass' );
-var RendererClass = require( __dirname + '/../libs/rendererClass' );
-var loadApi = require( __dirname + '/../libs/loadApi' );
+module.exports = function ( server, paths ) {
 
-module.exports = function ( paths ) {
+    var ws = new WebSocketServer( {
+        server: server
+    } );
 
-    paths = paths || {};
+    ws.on( 'connection', function connection( socket ) {
+        var location = url.parse( socket.upgradeReq.url, true );
 
-    return function ( socket, req ) {
+        // you might use location.query.access_token to authenticate or share sessions
+        // or ws.upgradeReq.headers.cookie (see http://stackoverflow.com/a/16395220/151312)
 
-        var urlParts = url.parse( req.url.replace( /\/\.websocket$/, '' ), true );
-
-        var api = loadApi( paths.apis, urlParts.pathname, req );
-
-        var renderer = new RendererClass( paths.renderers, api );
-
-        var error = false;
-        if ( !api ) {
-            error = new ErrorClass( 404 );
-        } else {
-            if ( !api.methodAllowed( 'SOCKET' ) ) {
-                error = new ErrorClass( 405 );
-            }
-            if ( !api.protocolAllowed( req.protocol ) ) {
-                error = new ErrorClass( 403 );
-            }
-        }
-        if ( error ) {
-            socket.send( renderer.render( error.getMessage() ) );
-            socket.close();
-            return;
-        }
-
-        socket.on( 'message', function ( message ) {
-            req.body = message;
-            api._getData( function ( data ) {
-                socket.send( renderer.render( data ) );
-            }, function ( error ) {
-                socket.send( renderer.render( error.getMessage() ) );
-            } );
+        socket.on( 'message', function incoming( message ) {
+            console.log( 'received: %s', message );
         } );
 
-        socket.on( 'close', function () {
-            api.terminate();
-        } );
+        socket.send( 'something' );
+    } );
+
+    return function ( req, res ) {
+
 
     };
 };

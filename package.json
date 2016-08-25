@@ -6,7 +6,8 @@
     "license": "SEE LICENSE IN LICENSE.md",
     "keywords": [
         "node",
-        "express",
+        "webserver",
+        "api",
         "websocket"
     ],
     "main": "./core/index.js",
@@ -18,7 +19,7 @@
         "url": "https://github.com/vladfilipro/apigeon/issues"
     },
     "dependencies": {
-        "express-ws": "2.0.0-rc.1"
+        "ws": "1.1.1"
     },
     "devDependencies": {
         "rigs": "*",
@@ -26,10 +27,8 @@
         "rig-unit-test": "*",
         "chai": "3.5.0",
         "run-sequence": "1.2.2",
-        "express": "4.14.0",
         "supertest": "1.2.0",
-        "cookie-parser": "1.4.3",
-        "websocket": "1.0.23"
+        "cookie-parser": "1.4.3"
     },
     "scripts": {
         "start": "npm outdated && ./node_modules/.bin/rigs && ./node_modules/.bin/gulp init",
