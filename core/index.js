@@ -12,6 +12,10 @@ function Apigeon( options ) {
             drivers: null,
             renderers: null
         },
+        errors: {},
+        rewrite: function ( url ) {
+            return url;
+        },
         httpsOptions: null
     }, options );
 
@@ -59,18 +63,19 @@ function Apigeon( options ) {
     this.start = startServer;
     this.stop = stopServer;
 
-    Apigeon.prototype.REST = require( __dirname + '/webserver/rest-middleware' )( config.paths );
-    Apigeon.prototype.WS = require( __dirname + '/webserver/ws-middleware' )( config.paths );
+    Apigeon.prototype.REST = function () {
+        return require( __dirname + '/webserver/rest' )( config );
+    };
+    Apigeon.prototype.WS = function () {
+        return require( __dirname + '/webserver/ws' )( config );
+    };
+    Apigeon.prototype.session = function ( sessionConfig ) {
+        return require( __dirname + '/webserver/session' )( config, sessionConfig );
+    };
+    Apigeon.prototype.logs = function ( logsConfig ) {
+        return require( __dirname + '/webserver/logs' )( config, logsConfig );
+    };
 
 }
-
-// Apigeon.prototype.session = function ( config ) {
-//     var drivers = this.paths.drivers;
-//     return require( __dirname + '/webserver/session-middleware' )( drivers, config );
-// };
-// Apigeon.prototype.logs = function ( config ) {
-//     var drivers = this.paths.drivers;
-//     return require( __dirname + '/webserver/logs-middleware' )( drivers, config );
-// };
 
 module.exports = Apigeon;

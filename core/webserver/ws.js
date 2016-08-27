@@ -8,7 +8,7 @@ var ErrorClass = require( __dirname + '/../libs/errorClass' );
 var RendererClass = require( __dirname + '/../libs/rendererClass' );
 var loadApi = require( __dirname + '/../libs/loadApi' );
 
-module.exports = function ( paths ) {
+module.exports = function ( config ) {
 
     return function ( server ) {
 
@@ -18,20 +18,20 @@ module.exports = function ( paths ) {
 
         ws.on( 'connection', function ( socket ) {
             var req = socket.upgradeReq;
-            var location = url.parse( req.url, true );
+            var location = url.parse( config.rewrite( req.url ), true );
 
-            var api = loadApi( paths.apis, location.pathname, req );
-            var renderer = new RendererClass( paths.renderers, api );
+            var api = loadApi( config.paths.apis, location.pathname, req );
+            var renderer = new RendererClass( config.paths.renderers, api );
 
             var error = false;
             if ( !api ) {
-                error = new ErrorClass( 404 );
+                error = new ErrorClass( 404, config.errors[ '404' ] );
             } else {
                 if ( !api.methodAllowed( 'SOCKET' ) ) {
-                    error = new ErrorClass( 405 );
+                    error = new ErrorClass( 405, config.errors[ '405' ] );
                 }
                 if ( !api.protocolAllowed( req.protocol ) ) {
-                    error = new ErrorClass( 403 );
+                    error = new ErrorClass( 403, config.errors[ '403' ] );
                 }
             }
             if ( error ) {
@@ -40,27 +40,21 @@ module.exports = function ( paths ) {
                 return;
             }
 
-            socket.on( 'message', function incoming( message ) {
-                console.log( 'received: %s', message );
+            socket.on( 'message', function ( message ) {
+                req.body = message;
+                api._getData( function ( data ) {
+                    socket.send( renderer.render( data ) );
+                }, function ( error ) {
+                    socket.send( renderer.render( error.getMessage() ) );
+                } );
             } );
 
-            socket.send( 'something' );
-        } );
-
-
-
-
-        socket.on( 'message', function ( message ) {
-            req.body = message;
-            api._getData( function ( data ) {
-                socket.send( renderer.render( data ) );
-            }, function ( error ) {
-                socket.send( renderer.render( error.getMessage() ) );
+            socket.on( 'close', function () {
+                api.terminate();
             } );
+
         } );
 
-        socket.on( 'close', function () {
-            api.terminate();
-        } );
     };
+
 };
