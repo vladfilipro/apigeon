@@ -87,6 +87,22 @@ describe( 'Apigeon: /core/libs/sessionClass.js', function () {
         } );
     } );
 
+    it( 'should work on defaults if no configuration is specified', function ( done ) {
+        var session = new Victim();
+        session.start().then( function () {
+            session.set( 'test_key', 'test_value' );
+            session.update().then( function () {
+                var dbDriver = utils.getFile( config.driver, [ '', driversPath ] );
+                dbDriver.select( config.table, session.getSessionId(), function ( e, res ) {
+                    expect( res.data ).to.eql( {
+                        'test_key': 'test_value'
+                    } );
+                    done();
+                } );
+            } );
+        } );
+    } );
+
     it( 'should return a value for the sart callback error parameter if insert failed', function ( done ) {
         var session = new Victim( fakeDriversPath, {
             table: 'session',

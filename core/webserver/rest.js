@@ -1,7 +1,5 @@
 'use strict';
 
-var url = require( 'url' );
-
 var ErrorClass = require( __dirname + '/../libs/errorClass' );
 var RendererClass = require( __dirname + '/../libs/rendererClass' );
 var loadApi = require( __dirname + '/../libs/loadApi' );
@@ -11,9 +9,8 @@ module.exports = function ( config ) {
     return function ( server ) {
 
         server.on( 'request', function ( req, res ) {
-            var location = url.parse( config.rewrite( req.url ), true );
 
-            var api = loadApi( config.paths.apis, location.pathname, req );
+            var api = loadApi( config.paths.apis, req.pathname, req );
             var renderer = new RendererClass( config.paths.renderers, api );
 
             res.header( 'Content-type', renderer.contentType );

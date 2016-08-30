@@ -46,6 +46,22 @@ describe( 'Apigeon: /core/libs/logsClass.js', function () {
 
     } );
 
+    it( 'should work with defaults if not config specified', function ( done ) {
+        var data = {
+            'key': 'value'
+        };
+        var dbDriver = utils.getFile( config.driver, [ fakeDriversPath, driversPath ] );
+        var logs = new Victim();
+        logs.log( data, function ( id ) {
+            expect( typeof id ).to.equal( 'string' );
+            dbDriver.select( config.table, id, function ( e, res ) {
+                expect( res ).to.eql( data );
+                done();
+            } );
+        } );
+
+    } );
+
     it( 'should save data defined in start with every log', function ( done ) {
         var data = {
             'key': 'value'

@@ -2,8 +2,6 @@
 
 var WebSocketServer = require( 'ws' ).Server;
 
-var url = require( 'url' );
-
 var ErrorClass = require( __dirname + '/../libs/errorClass' );
 var RendererClass = require( __dirname + '/../libs/rendererClass' );
 var loadApi = require( __dirname + '/../libs/loadApi' );
@@ -18,9 +16,8 @@ module.exports = function ( config ) {
 
         ws.on( 'connection', function ( socket ) {
             var req = socket.upgradeReq;
-            var location = url.parse( config.rewrite( req.url ), true );
 
-            var api = loadApi( config.paths.apis, location.pathname, req );
+            var api = loadApi( config.paths.apis, req.pathname, req );
             var renderer = new RendererClass( config.paths.renderers, api );
 
             var error = false;

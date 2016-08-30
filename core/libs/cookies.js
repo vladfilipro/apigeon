@@ -14,9 +14,8 @@ module.exports = {
     format: function ( key, value, path, expires, secure, httpOnly ) {
         var cookie = [];
         cookie.push( key + '=' + encodeURI( value ) );
-        if ( path ) {
-            cookie.push( 'path=' + path );
-        }
+        path = path || '/';
+        cookie.push( 'path=' + path );
         if ( expires ) {
             cookie.push( 'expires=' + expires );
         }

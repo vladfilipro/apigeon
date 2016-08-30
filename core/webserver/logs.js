@@ -9,6 +9,9 @@ module.exports = function ( config, logsConfig ) {
 
         server.on( 'request', function ( req ) {
 
+            config = config || {};
+            config.paths = config.paths || {};
+
             // Initialize logging
             var logs = new LogsClass( config.paths.drivers, logsConfig );
             logs.start( {

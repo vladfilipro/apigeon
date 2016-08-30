@@ -1,5 +1,6 @@
 'use strict';
 
+var url = require( 'url' );
 var utils = require( __dirname + '/utils' );
 var http = require( 'http' );
 var https = require( 'https' );
@@ -38,15 +39,13 @@ function Apigeon( options ) {
     } );
 
     var startServer = function ( port, done ) {
-        server.listen( port, done );
+        return server.listen( port, done );
     };
 
     var stopServer = function ( done ) {
         if ( server.listening ) {
-            for ( var i in connections ) {
-                if ( connections.hasOwnProperty( i ) ) {
-                    connections[ i ].destroy();
-                }
+            for ( var i = 0, keys = Object.keys( connections ), l = keys.length; i < l; i++ ) {
+                connections[ keys[ i ] ].destroy();
             }
             server.close( done );
         } else {
@@ -54,10 +53,24 @@ function Apigeon( options ) {
         }
     };
 
+    server.on( 'request', function ( req ) {
+        var location = url.parse( config.rewrite( req.url ), true );
+        req.query = location.query;
+        req.pathname = location.pathname;
+    } );
+
     this.attach = function ( serverType ) {
         if ( typeof serverType === 'function' ) {
             serverType( server );
         }
+    };
+
+    this.getInstance = function () {
+        return server;
+    };
+
+    this.getConfig = function () {
+        return config;
     };
 
     this.start = startServer;
