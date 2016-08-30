@@ -6,7 +6,16 @@ var ErrorClass = require( __dirname + '/../libs/errorClass' );
 var RendererClass = require( __dirname + '/../libs/rendererClass' );
 var loadApi = require( __dirname + '/../libs/loadApi' );
 
+var loadConfig = function ( config ) {
+    config = config || {};
+    config.paths = config.paths || {};
+    config.errors = config.errors || {};
+    return config;
+};
+
 module.exports = function ( config ) {
+
+    config = loadConfig( config );
 
     return function ( server ) {
 

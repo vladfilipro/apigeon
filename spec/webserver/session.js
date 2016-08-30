@@ -22,22 +22,18 @@ function DummyServer( input ) {
         server.on( 'request', f );
     };
 
-    this.start = function ( url, headers, next ) {
+    this.start = function ( cb, next ) {
         server.on( 'request', function ( req, res ) {
-            console.log( res.getHeader( 'set-cookie' ), input, req.url );
             res.end( input );
         } );
         var instance = server.listen( '8000', function () {
-            var r = request( instance ).get( url );
-            for ( var i = 0; i < headers.length; i++ ) {
-                if ( Array.isArray( headers[ i ] ) ) {
-                    r.expect.apply( this, headers[ i ] );
-                } else {
-                    r.expect( headers[ i ] );
-                }
-            }
+            var r = request( instance );
+            r = cb( r );
             r.end( function ( err, res ) {
-                expect( err ).to.equal( null );
+                if ( err ) {
+                    console.log( err );
+                    throw err;
+                }
                 expect( res.text ).to.equal( input );
                 instance.close( next );
             } );
@@ -61,11 +57,24 @@ describe( 'Apigeon: /core/webserver/session.js', function () {
     } );
 
     it( 'should attach a session instance to the request object when used', function ( done ) {
-        var d = new DummyServer( '' );
-        d.addServerReply( function ( req ) {
-            expect( req.session ).to.be.an.instanceof( SessionClass );
+        var server = http.createServer();
+        var plugin = victim();
+        plugin( server );
+        server.on( 'request', function ( req, res ) {
+            res.end( '' );
         } );
-        d.start( '/', [ 200 ], done );
+        var instance = server.listen( '8000', function () {
+            request( instance )
+                .get( '/' )
+                .end( function ( err, res ) {
+                    if ( err ) {
+                        console.log( err );
+                        throw err;
+                    }
+                    expect( res.text ).to.equal( '' );
+                    instance.close( done );
+                } );
+        } );
     } );
 
     it( 'should retrieve a previous session by passing session id in the query string', function ( done ) {
@@ -73,7 +82,11 @@ describe( 'Apigeon: /core/webserver/session.js', function () {
         session.start().then( function () {
             var sid = session.getSessionId();
             var d = new DummyServer( sid );
-            d.start( '/?sessionid=' + sid, [ 200 ], done );
+            d.start( function ( r ) {
+                return r
+                    .get( '/?sessionid=' + sid )
+                    .expect( 200 );
+            }, done );
         } );
     } );
 
@@ -82,93 +95,54 @@ describe( 'Apigeon: /core/webserver/session.js', function () {
         session.start().then( function () {
             var sid = session.getSessionId();
             var d = new DummyServer( sid );
-            d.start( '/?sessionid=' + sid, [
-                200, [ 'set-cookie', 'session=' + sid + '; path=/' ]
-            ], done );
+            d.start( function ( r ) {
+                return r
+                    .get( '/?sessionid=' + sid )
+                    .expect( 200 )
+                    .expect( 'set-cookie', 'session=' + sid + '; path=/' );
+            }, done );
         } );
     } );
 
     it( 'should retrieve session id from cookie if available', function ( done ) {
-        var startTestCase = function ( sid ) {
-            var server = http.createServer();
-            var plugin = victim();
-            plugin( server );
-            server.on( 'request', function ( req, res ) {
-                res.end( req.session.getSessionId() );
-            } );
-            var instance = server.listen( '8000', function () {
-                request( instance )
-                    .get( '/' )
-                    .expect( 200 )
-                    .set( 'Cookie', 'session=' + sid )
-                    .end( function ( err, res ) {
-                        expect( err ).to.equal( null );
-                        expect( res.text ).to.equal( sid );
-                        instance.close( done );
-                    } );
-            } );
-        };
-
-        // Create a session
         var session = new SessionClass();
         session.start().then( function () {
-            startTestCase( session.getSessionId() );
+            var sid = session.getSessionId();
+            var d = new DummyServer( sid );
+            d.start( function ( r ) {
+                return r
+                    .get( '/' )
+                    .expect( 200 )
+                    .set( 'Cookie', 'session=' + sid );
+            }, done );
         } );
     } );
 
     it( 'should retrieve a previous session by passing session id in the header', function ( done ) {
-        var startTestCase = function ( sid ) {
-            var server = http.createServer();
-            var plugin = victim();
-            plugin( server );
-            server.on( 'request', function ( req, res ) {
-                res.end( req.session.getSessionId() );
-            } );
-            var instance = server.listen( '8000', function () {
-                request( instance )
-                    .get( '/' )
-                    .expect( 200 )
-                    .set( 'Session-Id', 'SID:ANON:localhost:' + sid + ':34' )
-                    .end( function ( err, res ) {
-                        expect( err ).to.equal( null );
-                        expect( res.text ).to.equal( sid );
-                        instance.close( done );
-                    } );
-            } );
-        };
-
-        // Create a session
         var session = new SessionClass();
         session.start().then( function () {
-            startTestCase( session.getSessionId() );
+            var sid = session.getSessionId();
+            var d = new DummyServer( sid );
+            d.start( function ( r ) {
+                return r
+                    .get( '/' )
+                    .expect( 200 )
+                    .set( 'Session-Id', 'SID:ANON:localhost:' + sid + ':34' );
+            }, done );
         } );
     } );
 
-    it( 'should retrieve a previous session by passing session id in the header', function ( done ) {
-        var startTestCase = function ( sid ) {
-            var server = http.createServer();
-            var plugin = victim();
-            plugin( server );
-            server.on( 'request', function ( req, res ) {
-                res.end( req.session.getSessionId() );
-            } );
-            var instance = server.listen( '8000', function () {
-                request( instance )
-                    .get( '/' )
-                    .expect( 200 )
-                    .set( 'Session-Id', 'badheader:localhost:' + sid )
-                    .end( function ( err, res ) {
-                        expect( err ).to.equal( null );
-                        expect( res.text ).to.not.equal( sid );
-                        instance.close( done );
-                    } );
-            } );
-        };
-
-        // Create a session
+    it( 'should create a new session if invalid header', function ( done ) {
         var session = new SessionClass();
         session.start().then( function () {
-            startTestCase( session.getSessionId() );
+            var sid = session.getSessionId();
+            var d = new DummyServer( sid );
+            d.start( function ( r ) {
+                return r
+                    .get( '/' )
+                    .expect( 200 )
+                    .set( 'Session-Id', 'badheader:localhost:' + sid );
+            }, done );
         } );
     } );
 

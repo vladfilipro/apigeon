@@ -34,7 +34,10 @@ describe( 'Apigeon: /core/webserver/logs.js', function () {
                 .get( '/' )
                 .expect( 200 )
                 .end( function ( err, res ) {
-                    expect( err ).to.equal( null );
+                    if ( err ) {
+                        console.log( err );
+                        throw err;
+                    }
                     expect( res.text ).to.equal( response );
                     instance.close( done );
                 } );

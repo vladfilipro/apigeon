@@ -1,19 +1,31 @@
 'use strict';
 
+var url = require( 'url' );
 var ErrorClass = require( __dirname + '/../libs/errorClass' );
 var RendererClass = require( __dirname + '/../libs/rendererClass' );
 var loadApi = require( __dirname + '/../libs/loadApi' );
 
+var loadConfig = function ( config ) {
+    config = config || {};
+    config.paths = config.paths || {};
+    config.errors = config.errors || {};
+    return config;
+};
+
 module.exports = function ( config ) {
+
+    config = loadConfig( config );
 
     return function ( server ) {
 
         server.on( 'request', function ( req, res ) {
 
+            req.pathname = req.pathname || url.parse( req.url, true ).pathname;
+
             var api = loadApi( config.paths.apis, req.pathname, req );
             var renderer = new RendererClass( config.paths.renderers, api );
 
-            res.header( 'Content-type', renderer.contentType );
+            res.setHeader( 'Content-type', renderer.contentType );
 
             var error = false;
             if ( !api ) {
@@ -27,7 +39,7 @@ module.exports = function ( config ) {
                 }
             }
             if ( error ) {
-                res.status( error.getCode() );
+                res.writeHead( error.getCode() );
                 res.end( renderer.render( error.getMessage() ) );
                 return;
             }

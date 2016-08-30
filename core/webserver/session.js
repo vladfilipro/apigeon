@@ -3,6 +3,12 @@
 var SessionClass = require( __dirname + '/../libs/sessionClass' );
 var cookies = require( __dirname + '/../libs/cookies' );
 
+var loadConfig = function ( config ) {
+    config = config || {};
+    config.paths = config.paths || {};
+    return config;
+};
+
 var getSessionIdFromHeader = function ( header ) {
     var sessionId;
     if ( header ) {
@@ -16,12 +22,11 @@ var getSessionIdFromHeader = function ( header ) {
 
 module.exports = function ( config, sessionConfig ) {
 
+    config = loadConfig( config );
+
     return function ( server ) {
 
         server.on( 'request', function ( req, res ) {
-
-            config = config || {};
-            config.paths = config.paths || {};
 
             var session = new SessionClass( config.paths.drivers, sessionConfig );
 
@@ -31,7 +36,7 @@ module.exports = function ( config, sessionConfig ) {
 
             // Initialize session
             session.start( req.query.sessionid || headerSessionId || cookies.parse( req.headers.cookie ).session ).then( function () {
-                res.setHeader( 'Set-Cookie', cookies.format( 'session', session.getSessionId() ) );
+                res.setHeader( 'set-cookie', cookies.format( 'session', session.getSessionId() ) );
                 req.session = session;
             } );
 
