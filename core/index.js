@@ -57,6 +57,7 @@ function Apigeon( options ) {
         var location = url.parse( config.rewrite( req.url ), true );
         req.query = location.query;
         req.pathname = location.pathname;
+        req.protocol = ( req.socket.encrypted ) ? ( req.headers[ 'X-Forwarded-Proto' ] ? 'https' : 'http' ) : 'http';
     } );
 
     this.attach = function ( serverType ) {

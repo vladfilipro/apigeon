@@ -27,7 +27,7 @@ module.exports = function ( config ) {
             var req = socket.upgradeReq;
 
             var api = loadApi( config.paths.apis, req.pathname, req );
-            var renderer = new RendererClass( config.paths.renderers, api );
+            var renderer = new RendererClass( config.paths.renderers, api, req.headers.accept );
 
             var error = false;
             if ( !api ) {

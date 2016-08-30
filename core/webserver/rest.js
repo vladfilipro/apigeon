@@ -23,7 +23,7 @@ module.exports = function ( config ) {
             req.pathname = req.pathname || url.parse( req.url, true ).pathname;
 
             var api = loadApi( config.paths.apis, req.pathname, req );
-            var renderer = new RendererClass( config.paths.renderers, api );
+            var renderer = new RendererClass( config.paths.renderers, api, req.headers.accept );
 
             res.setHeader( 'Content-type', renderer.contentType );
 
@@ -39,15 +39,15 @@ module.exports = function ( config ) {
                 }
             }
             if ( error ) {
-                res.writeHead( error.getCode() );
+                res.statusCode = error.getCode();
                 res.end( renderer.render( error.getMessage() ) );
                 return;
             }
 
             var proccessRequest = function ( data, code ) {
-                res.status( code );
+                res.statusCode = code;
                 if ( code > 300 && code < 400 ) {
-                    res.redirect( data );
+                    res.setHeader( 'Location', data );
                 }
                 res.end( renderer.render( data ) );
             };
