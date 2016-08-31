@@ -1,6 +1,6 @@
 'use strict';
 
-var Config = require( __dirname + '/libs/config' );
+var Config = require( __dirname + '/libs/configClass' );
 var http = require( 'http' );
 var https = require( 'https' );
 
@@ -10,10 +10,10 @@ function Apigeon( options ) {
 
     var server = null;
 
-    if ( !config.httpsOptions ) {
+    if ( !config.get( 'httpsOptions' ) ) {
         server = http.createServer();
     } else {
-        server = https.createServer( config.httpsOptions );
+        server = https.createServer( config.get( 'httpsOptions' ) );
     }
 
     // Register all connections

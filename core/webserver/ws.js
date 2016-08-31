@@ -1,6 +1,6 @@
 'use strict';
 
-var Config = require( __dirname + '/../libs/config' );
+var Config = require( __dirname + '/../libs/configClass' );
 var extendReq = require( __dirname + '/../libs/extendReq' );
 var WebSocketServer = require( 'ws' ).Server;
 var ErrorClass = require( __dirname + '/../libs/errorClass' );
