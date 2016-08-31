@@ -2,16 +2,16 @@
 
 var expect = require( 'chai' ).expect;
 
-var victim = require( './../../core/utils/merge.js' );
+var victim = require( './../../core/utils/extend.js' );
 
-describe( 'Apigeon: /core/utils/merge.js', function () {
+describe( 'Apigeon: /core/utils/extend.js', function () {
 
     it( 'should be a function', function ( done ) {
         expect( victim ).to.be.a( 'function' );
         done();
     } );
 
-    it( 'should merge empty object with any object', function ( done ) {
+    it( 'should extend empty object with any object', function ( done ) {
         var output = victim( {}, {
             foo: 1,
             bar: {
@@ -27,17 +27,17 @@ describe( 'Apigeon: /core/utils/merge.js', function () {
         done();
     } );
 
-    it( 'should merge object with anything', function ( done ) {
+    it( 'should extend object with anything', function ( done ) {
         var output = victim( {
             foo: 1
-        }, null );
+        }, {} );
         expect( output ).to.eql( {
             foo: 1
         } );
         done();
     } );
 
-    it( 'should merge object with null', function ( done ) {
+    it( 'should extend object with null', function ( done ) {
         var output = victim( {
             foo: 1,
             bar: {
@@ -53,7 +53,7 @@ describe( 'Apigeon: /core/utils/merge.js', function () {
         done();
     } );
 
-    it( 'should merge null object with any object', function ( done ) {
+    it( 'should extend null object with any object', function ( done ) {
         var output = victim( null, {
             foo: 1,
             bar: {
@@ -69,9 +69,10 @@ describe( 'Apigeon: /core/utils/merge.js', function () {
         done();
     } );
 
-    it( 'should merge more than 2 objects', function ( done ) {
+    it( 'should extend more than 2 objects', function ( done ) {
         var output = victim( {
-            foo: 2
+            foo: 2,
+            xx: 2
         }, null, {
             foo: 1,
             bar: {
@@ -80,9 +81,36 @@ describe( 'Apigeon: /core/utils/merge.js', function () {
         } );
         expect( output ).to.eql( {
             foo: 1,
+            xx: 2,
             bar: {
                 foo: 1
             }
+        } );
+        done();
+    } );
+
+    it( 'should extend deep properties', function ( done ) {
+        var output = victim( {
+            paths: {
+                apis: null,
+                drivers: null,
+                renderers: null
+            },
+            errors: {},
+            httpsOptions: null
+        }, {
+            paths: {
+                apis: '/Users/vladfilip/projects/vladfilip/apigeon/spec/webserver/fakeApis'
+            }
+        } );
+        expect( output ).to.eql( {
+            paths: {
+                apis: '/Users/vladfilip/projects/vladfilip/apigeon/spec/webserver/fakeApis',
+                drivers: null,
+                renderers: null
+            },
+            errors: {},
+            httpsOptions: null
         } );
         done();
     } );

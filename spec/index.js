@@ -37,9 +37,9 @@ describe( 'Apigeon: core', function () {
 
     it( 'should have rewrite function in config object', function ( done ) {
         var apigeon = new Apigeon();
-        expect( apigeon.getConfig().rewrite ).to.be.a( 'function' );
-        expect( apigeon.getConfig().rewrite ).to.have.length( 1 );
-        expect( apigeon.getConfig().rewrite( 'test' ) ).to.equal( 'test' );
+        expect( apigeon.getConfig().get( 'rewrite' ) ).to.be.a( 'function' );
+        expect( apigeon.getConfig().get( 'rewrite' ) ).to.have.length( 1 );
+        expect( apigeon.getConfig().get( 'rewrite' )( 'test' ) ).to.equal( 'test' );
         done();
     } );
 
@@ -81,29 +81,6 @@ describe( 'Apigeon: core', function () {
         apigeon.attach();
         apigeon.start( 8000, function () {
             apigeon.stop( done );
-        } );
-    } );
-
-    it( 'should attach query property and pathname property to req object', function ( done ) {
-        var apigeon = new Apigeon();
-        apigeon.attach( function ( server ) {
-            server.on( 'request', function ( req, res ) {
-                expect( req.query ).to.eql( {
-                    p1: 'a',
-                    p2: 'b'
-                } );
-                expect( req.pathname ).to.equal( '/' );
-                res.end( 'Hello' );
-            } );
-        } );
-        var instance = apigeon.start( 8000, function () {
-            request( instance )
-                .get( '/?p1=a&p2=b' )
-                .expect( 200 )
-                .end( function ( e, res ) {
-                    expect( res.text ).to.equal( 'Hello' );
-                    instance.close( done );
-                } );
         } );
     } );
 

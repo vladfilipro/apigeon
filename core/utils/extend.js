@@ -1,7 +1,7 @@
 'use strict';
 
 var extend = function ( a, b ) {
-    if ( typeof b === 'object' && b !== null ) {
+    if ( b && typeof b === 'object' ) {
         Object.keys( b ).forEach( function ( prop ) {
             a = a || {};
             if ( typeof a[ prop ] === 'object' ) {
@@ -10,6 +10,8 @@ var extend = function ( a, b ) {
                 a[ prop ] = b[ prop ];
             }
         } );
+    } else {
+        a = b;
     }
     return a;
 };
@@ -18,7 +20,9 @@ module.exports = function () {
     var target = arguments[ 0 ];
     var extensions = [];
     for ( var i = 1, params = Object.keys( arguments ), l = params.length; i < l; i++ ) {
-        extensions.push( arguments[ params[ i ] ] );
+        if ( arguments[ params[ i ] ] ) {
+            extensions.push( arguments[ params[ i ] ] );
+        }
     }
     for ( var j = 0; j < extensions.length; j++ ) {
         target = extend( target, extensions[ j ] );

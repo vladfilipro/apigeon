@@ -1,24 +1,12 @@
 'use strict';
 
-var url = require( 'url' );
-var utils = require( __dirname + '/utils' );
+var Config = require( __dirname + '/libs/config' );
 var http = require( 'http' );
 var https = require( 'https' );
 
 function Apigeon( options ) {
 
-    var config = utils.merge( {}, {
-        paths: {
-            apis: null,
-            drivers: null,
-            renderers: null
-        },
-        errors: {},
-        rewrite: function ( url ) {
-            return url;
-        },
-        httpsOptions: null
-    }, options );
+    var config = new Config( options );
 
     var server = null;
 
@@ -52,13 +40,6 @@ function Apigeon( options ) {
             done();
         }
     };
-
-    server.on( 'request', function ( req ) {
-        var location = url.parse( config.rewrite( req.url ), true );
-        req.query = location.query;
-        req.pathname = location.pathname;
-        req.protocol = ( req.socket.encrypted ) ? ( req.headers[ 'X-Forwarded-Proto' ] ? 'https' : 'http' ) : 'http';
-    } );
 
     this.attach = function ( serverType ) {
         if ( typeof serverType === 'function' ) {
