@@ -4,6 +4,12 @@ var Config = require( __dirname + '/libs/configClass' );
 var http = require( 'http' );
 var https = require( 'https' );
 
+/**
+ * Apigeon
+ * @class
+ * @desc Creates an new instance of <tt>Apigeon</tt>. Each instance is connected to a single http or https server.
+ * @param options {Object} Configuration object
+ */
 function Apigeon( options ) {
 
     var config = new Config( options );
@@ -26,11 +32,22 @@ function Apigeon( options ) {
         } );
     } );
 
-    var startServer = function ( port, done ) {
+    /**
+     * start
+     * @desc Starts the http / https server
+     * @param port {Number} The port used by the http / https server
+     * @param done {Function} Callback function, gets called once the server starts listening
+     */
+    this.start = function ( port, done ) {
         return server.listen( port, done );
     };
 
-    var stopServer = function ( done ) {
+    /**
+     * stop
+     * @desc Stops the http / https server
+     * @param done {Function} Callback function, gets called once the server stops
+     */
+    this.stop = function ( done ) {
         if ( server.listening ) {
             for ( var i = 0, keys = Object.keys( connections ), l = keys.length; i < l; i++ ) {
                 connections[ keys[ i ] ].destroy();
@@ -41,34 +58,65 @@ function Apigeon( options ) {
         }
     };
 
-    this.attach = function ( serverType ) {
-        if ( typeof serverType === 'function' ) {
-            serverType( server );
-        }
-    };
-
+    /**
+     * getInstance
+     * @desc Returns the server instance
+     * @return {http.Server}
+     */
     this.getInstance = function () {
         return server;
     };
 
+    /**
+     * getConfig
+     * @desc Returns configuration instance of <tt>Apigeon</tt>
+     * @return {Config}
+     */
     this.getConfig = function () {
         return config;
     };
 
-    this.start = startServer;
-    this.stop = stopServer;
+    /**
+     * enableREST
+     * @desc Enables REST features for the instance
+     */
+    this.enableREST = function () {
+        require( __dirname + '/webserver/rest' )( config )( server );
+    };
 
-    Apigeon.prototype.REST = function () {
-        return require( __dirname + '/webserver/rest' )( config );
+    /**
+     * enableWS
+     * @desc Enables WS features for the instance
+     */
+    this.enableWS = function () {
+        require( __dirname + '/webserver/ws' )( config )( server );
     };
-    Apigeon.prototype.WS = function () {
-        return require( __dirname + '/webserver/ws' )( config );
-    };
-    Apigeon.prototype.session = function ( sessionConfig ) {
-        return require( __dirname + '/webserver/session' )( config, sessionConfig );
-    };
-    Apigeon.prototype.logs = function ( logsConfig ) {
-        return require( __dirname + '/webserver/logs' )( config, logsConfig );
+
+    /**
+     * middlewares
+     * @type {Object}
+     * @namespace
+     * @desc Contains a list of all available middlewares
+     */
+    this.middlewares = {
+        /**
+         * Returns a middleware to manipulate session
+         * @type {Function}
+         * @param {Object} sessionConfig Session middleware configuration object
+         * @returns {Function}
+         */
+        session: function ( sessionConfig ) {
+            return require( __dirname + '/webserver/session' )( config, sessionConfig );
+        },
+        /**
+         * Returns a middleware to manipulate logs
+         * @type {Function}
+         * @param {Object} logsConfig Logs middleware configuration object
+         * @returns {Function}
+         */
+        logs: function ( logsConfig ) {
+            return require( __dirname + '/webserver/logs' )( config, logsConfig );
+        }
     };
 
 }

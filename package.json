@@ -27,10 +27,12 @@
         "rig-unit-test": "*",
         "chai": "3.5.0",
         "run-sequence": "1.2.2",
-        "supertest": "2.0.0"
+        "supertest": "2.0.0",
+        "jsdoc": "3.4.0"
     },
     "scripts": {
         "start": "npm outdated && ./node_modules/.bin/rigs && ./node_modules/.bin/gulp init",
-        "test": "./node_modules/.bin/gulp test"
+        "test": "./node_modules/.bin/gulp test",
+        "docs": "./node_modules/.bin/jsdoc -r ./core"
     }
 }
