@@ -130,6 +130,25 @@ describe( 'Apigeon: core', function () {
         } );
     } );
 
+    it( 'should extend the req object', function ( done ) {
+        var apigeon = new Apigeon();
+        apigeon.attach( function ( req, res ) {
+            expect( req.pathname ).to.not.equal( undefined );
+            expect( req.protocol ).to.not.equal( undefined );
+            expect( req.query ).to.not.equal( undefined );
+            res.end( 'Hello' );
+        } );
+        var instance = apigeon.start( 8000, function () {
+            request( instance )
+                .get( '/' )
+                .expect( 200 )
+                .end( function ( e, res ) {
+                    expect( res.text ).to.equal( 'Hello' );
+                    instance.close( done );
+                } );
+        } );
+    } );
+
     it( 'should be able to start an https server', function ( done ) {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
         var fs = require( 'fs' );

@@ -1,6 +1,7 @@
 'use strict';
 
 var Config = require( __dirname + '/libs/configClass' );
+var extendReq = require( __dirname + '/libs/extendReq' );
 var http = require( 'http' );
 var https = require( 'https' );
 
@@ -24,6 +25,10 @@ function Apigeon( options ) {
         socket.on( 'close', function () {
             delete connections[ id ];
         } );
+    } );
+
+    server.on( 'request', function ( req ) {
+        extendReq( req, config.get() );
     } );
 
     this.start = function ( port, done ) {
