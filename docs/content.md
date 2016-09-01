@@ -3,18 +3,21 @@
 ## General
 
 Chapter            | Description
------------------- | ------------------------------------------------------------------------------------
-Configuration      | Detailed information on how to configure Apigeon and Config class
+------------------ | ------------------------------------------------------------------------------------------
+Configuration      | How to configure Apigeon and Config class usage
 Request extensions | Information on how Apigeon mutates the request object: `http.IncomingMessage` object
-Middlewares        | Information on available middlewares as well as guides on creating your own
+Routes             | Detailed information on the `Route Class` as well as detailed information on how they work
+Renderer           | Detailed information on renderers and guides on creating custom renderers
+Driver             | Detailed information on drivers and guides on creating custom drivers
+Error              | Detailed information on the `Error Class` as well as detailed information on how they work
 
-## Classes
+## Middlewares
 
-Chapter  | Description
--------- | --------------------------------------------
-Route    | Provides information on the `Route Class`
-Renderer | Provides information on the `Renderer Class`
-Driver   | Provides information on the `Driver Class`
+Chapter           | Description
+----------------- | --------------------------------------------------------------------------
+Logs              | Detailed information on how to use the `logs` middleware
+Session           | Detailed information on how to use the `session` middleware
+Custom middleware | Additional information on how middlewares work, and how to create your own
 
 ## Server types
 
