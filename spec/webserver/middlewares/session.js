@@ -3,20 +3,19 @@
 var expect = require( 'chai' ).expect;
 var url = require( 'url' );
 var http = require( 'http' );
-var victim = require( './../../core/webserver/session.js' );
+var victim = require( './../../../core/webserver/middlewares/session.js' );
 var request = require( 'supertest' );
-var SessionClass = require( './../../core/libs/sessionClass' );
+var SessionClass = require( './../../../core/libs/sessionClass' );
 
 function DummyServer( input ) {
     var server = http.createServer();
-    var plugin = victim();
 
     //mimic apigeon and attach query to req object
     server.on( 'request', function ( req ) {
         var location = url.parse( req.url, true );
         req.query = location.query;
     } );
-    plugin( server );
+    server.on( 'request', victim() );
 
     this.addServerReply = function ( f ) {
         server.on( 'request', f );
@@ -41,7 +40,7 @@ function DummyServer( input ) {
     };
 }
 
-describe( 'Apigeon: /core/webserver/session.js', function () {
+describe( 'Apigeon: /core/webserver/middlewares/session.js', function () {
 
     it( 'should be a function with 2 parameters', function ( done ) {
         expect( victim ).to.be.a( 'function' );
@@ -49,17 +48,16 @@ describe( 'Apigeon: /core/webserver/session.js', function () {
         done();
     } );
 
-    it( 'should return a function with 1 parameters', function ( done ) {
+    it( 'should return a function with 2 parameters', function ( done ) {
         var plugin = victim();
         expect( plugin ).to.be.a( 'function' );
-        expect( plugin ).to.have.length( 1 );
+        expect( plugin ).to.have.length( 2 );
         done();
     } );
 
     it( 'should attach a session instance to the request object when used', function ( done ) {
         var server = http.createServer();
-        var plugin = victim();
-        plugin( server );
+        server.on( 'request', victim() );
         server.on( 'request', function ( req, res ) {
             res.end( '' );
         } );

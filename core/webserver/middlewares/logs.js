@@ -1,7 +1,7 @@
 'use strict';
 
-var utils = require( __dirname + '/../utils' );
-var LogsClass = require( __dirname + '/../libs/logsClass' );
+var utils = require( __dirname + '/../../utils' );
+var LogsClass = require( __dirname + '/../../libs/logsClass' );
 
 var loadConfig = function ( config ) {
     config = config || {};
@@ -13,21 +13,17 @@ module.exports = function ( config, logsConfig ) {
 
     config = loadConfig( config );
 
-    return function ( server ) {
+    return function ( req ) {
 
-        server.on( 'request', function ( req ) {
-
-            // Initialize logging
-            var logs = new LogsClass( config.paths.drivers, logsConfig );
-            logs.start( {
-                id: utils.uniqueId(),
-                ip: req.socket.remoteAddress,
-                route: req.url,
-                agent: req.headers[ 'User-Agent' ]
-            } );
-            req.logs = logs;
-
+        // Initialize logging
+        var logs = new LogsClass( config.paths.drivers, logsConfig );
+        logs.start( {
+            id: utils.uniqueId(),
+            ip: req.socket.remoteAddress,
+            route: req.url,
+            agent: req.headers[ 'User-Agent' ]
         } );
+        req.logs = logs;
 
     };
 

@@ -43,31 +43,61 @@ describe( 'Apigeon: core', function () {
         done();
     } );
 
-    it( 'should provide REST plugin', function ( done ) {
+    it( 'should have a enableREST method with no parameters', function ( done ) {
         var apigeon = new Apigeon();
-        expect( apigeon.REST() ).to.be.a( 'function' );
-        expect( apigeon.REST() ).to.have.length( 1 );
+        expect( apigeon.enableREST ).to.be.a( 'function' );
+        expect( apigeon.enableREST ).to.have.length( 0 );
         done();
     } );
 
-    it( 'should provide WS plugin', function ( done ) {
+    it( 'should be able to enable a rest server', function ( done ) {
         var apigeon = new Apigeon();
-        expect( apigeon.WS() ).to.be.a( 'function' );
-        expect( apigeon.WS() ).to.have.length( 1 );
+        apigeon.enableREST();
+        apigeon.start( 8000, function () {
+            apigeon.stop( done );
+        } );
+    } );
+
+    it( 'should have a enableWS method with no parameters', function ( done ) {
+        var apigeon = new Apigeon();
+        expect( apigeon.enableWS ).to.be.a( 'function' );
+        expect( apigeon.enableWS ).to.have.length( 0 );
         done();
     } );
 
-    it( 'should provide session plugin', function ( done ) {
+    it( 'should be able to enable a ws server', function ( done ) {
         var apigeon = new Apigeon();
-        expect( apigeon.session() ).to.be.a( 'function' );
-        expect( apigeon.session() ).to.have.length( 1 );
+        apigeon.enableWS();
+        apigeon.start( 8000, function () {
+            apigeon.stop( done );
+        } );
+    } );
+
+    it( 'should have a session middleware', function ( done ) {
+        var apigeon = new Apigeon();
+        expect( apigeon.middlewares.session ).to.be.a( 'function' );
+        expect( apigeon.middlewares.session ).to.have.length( 1 );
         done();
     } );
 
-    it( 'should provide logs plugin', function ( done ) {
+    it( 'should provide a session middleware', function ( done ) {
         var apigeon = new Apigeon();
-        expect( apigeon.logs() ).to.be.a( 'function' );
-        expect( apigeon.logs() ).to.have.length( 1 );
+        expect( apigeon.middlewares.session() ).to.be.a( 'function' );
+        expect( apigeon.middlewares.session() ).to.have.length( 2 );
+        done();
+    } );
+
+    it( 'should have a logs middleware', function ( done ) {
+        var apigeon = new Apigeon();
+        expect( apigeon.middlewares.logs ).to.be.a( 'function' );
+        expect( apigeon.middlewares.logs ).to.have.length( 1 );
+        done();
+    } );
+
+    it( 'should provide a logs middleware', function ( done ) {
+        var apigeon = new Apigeon();
+        expect( apigeon.middlewares.logs() ).to.be.a( 'function' );
+        expect( apigeon.middlewares.logs() ).to.have.length( 1 );
         done();
     } );
 
@@ -84,12 +114,10 @@ describe( 'Apigeon: core', function () {
         } );
     } );
 
-    it( 'should be able to start an http server', function ( done ) {
+    it( 'should be able to start an http server with a custom middleware', function ( done ) {
         var apigeon = new Apigeon();
-        apigeon.attach( function ( server ) {
-            server.on( 'request', function ( req, res ) {
-                res.end( 'Hello' );
-            } );
+        apigeon.attach( function ( req, res ) {
+            res.end( 'Hello' );
         } );
         var instance = apigeon.start( 8000, function () {
             request( instance )
@@ -111,10 +139,8 @@ describe( 'Apigeon: core', function () {
                 cert: fs.readFileSync( __dirname + '/cert/cert.pem' )
             }
         } );
-        apigeon.attach( function ( server ) {
-            server.on( 'request', function ( req, res ) {
-                res.end( 'Hello' );
-            } );
+        apigeon.attach( function ( req, res ) {
+            res.end( 'Hello' );
         } );
         var instance = apigeon.start( 8000, function () {
             request( instance )
@@ -136,19 +162,17 @@ describe( 'Apigeon: core', function () {
 
     it( 'should kill all connections on server stop', function ( done ) {
         var apigeon = new Apigeon();
-        apigeon.attach( function ( server ) {
-            var i = 0;
-            server.on( 'request', function ( req, res ) {
+        var i = 0;
+        apigeon.attach( function ( req, res ) {
 
-                // Keeping a long connection to test termination of socket (will last 1.5 seconds)
-                var intervalId = setInterval( function () {
-                    res.write( '.' );
-                    i++;
-                    if ( i === 10 ) {
-                        clearInterval( intervalId );
-                    }
-                }, 10 );
-            } );
+            // Keeping a long connection to test termination of socket (will last 1.5 seconds)
+            var intervalId = setInterval( function () {
+                res.write( '.' );
+                i++;
+                if ( i === 10 ) {
+                    clearInterval( intervalId );
+                }
+            }, 10 );
         } );
         var instance = apigeon.start( 8000, function () {
             request( instance )

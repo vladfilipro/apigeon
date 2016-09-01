@@ -6,7 +6,7 @@ function Config( config ) {
 
     config = ( config instanceof Config ) ? config.get() : config;
 
-    var configuration = utils.extend( {}, {
+    var defaults = {
         paths: {
             apis: null,
             drivers: null,
@@ -17,7 +17,8 @@ function Config( config ) {
             return url;
         },
         httpsOptions: null
-    }, config );
+    };
+    var configuration = utils.extend( {}, defaults, config );
 
     this.get = function ( prop ) {
         if ( prop ) {

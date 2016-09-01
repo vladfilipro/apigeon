@@ -1,7 +1,7 @@
 'use strict';
 
-var SessionClass = require( __dirname + '/../libs/sessionClass' );
-var cookies = require( __dirname + '/../libs/cookies' );
+var SessionClass = require( __dirname + '/../../libs/sessionClass' );
+var cookies = require( __dirname + '/../../libs/cookies' );
 
 var loadConfig = function ( config ) {
     config = config || {};
@@ -24,22 +24,18 @@ module.exports = function ( config, sessionConfig ) {
 
     config = loadConfig( config );
 
-    return function ( server ) {
+    return function ( req, res ) {
 
-        server.on( 'request', function ( req, res ) {
+        var session = new SessionClass( config.paths.drivers, sessionConfig );
 
-            var session = new SessionClass( config.paths.drivers, sessionConfig );
+        var headerSessionId = getSessionIdFromHeader( req.headers[ 'session-id' ] );
 
-            var headerSessionId = getSessionIdFromHeader( req.headers[ 'session-id' ] );
+        req.query = req.query || {};
 
-            req.query = req.query || {};
-
-            // Initialize session
-            session.start( req.query.sessionid || headerSessionId || cookies.parse( req.headers.cookie ).session ).then( function () {
-                res.setHeader( 'set-cookie', cookies.format( 'session', session.getSessionId() ) );
-                req.session = session;
-            } );
-
+        // Initialize session
+        session.start( req.query.sessionid || headerSessionId || cookies.parse( req.headers.cookie ).session ).then( function () {
+            res.setHeader( 'set-cookie', cookies.format( 'session', session.getSessionId() ) );
+            req.session = session;
         } );
 
     };

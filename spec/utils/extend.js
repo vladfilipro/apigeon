@@ -101,7 +101,8 @@ describe( 'Apigeon: /core/utils/extend.js', function () {
         }, {
             paths: {
                 apis: '/Users/vladfilip/projects/vladfilip/apigeon/spec/webserver/fakeApis'
-            }
+            },
+            name: 'new'
         } );
         expect( output ).to.eql( {
             paths: {
@@ -110,7 +111,8 @@ describe( 'Apigeon: /core/utils/extend.js', function () {
                 renderers: null
             },
             errors: {},
-            httpsOptions: null
+            httpsOptions: null,
+            name: 'new'
         } );
         done();
     } );
