@@ -6,7 +6,7 @@ var http = require( 'http' );
 var victim = require( './../../core/webserver/ws.js' );
 var WebSocketClient = require( 'ws' );
 var path = require( 'path' );
-var apiPath = path.dirname( require.resolve( './fakeApis/dummy.js' ) );
+var routesPath = path.dirname( require.resolve( './fakeRoutes/dummy.js' ) );
 var ErrorClass = require( './../../core/libs/errorClass' );
 
 describe( 'Apigeon: /core/webserver/ws.js', function () {
@@ -43,7 +43,7 @@ describe( 'Apigeon: /core/webserver/ws.js', function () {
         var server = http.createServer();
         var plugin = victim( {
             paths: {
-                apis: apiPath
+                routes: routesPath
             }
         } );
         plugin( server );
@@ -63,7 +63,7 @@ describe( 'Apigeon: /core/webserver/ws.js', function () {
         var server = http.createServer();
         var plugin = victim( {
             paths: {
-                apis: apiPath
+                routes: routesPath
             }
         } );
         plugin( server );
@@ -79,11 +79,11 @@ describe( 'Apigeon: /core/webserver/ws.js', function () {
         } );
     } );
 
-    it( 'should return a message from api (can be used multiple times)', function ( done ) {
+    it( 'should return a message from route (can be used multiple times)', function ( done ) {
         var server = http.createServer();
         var plugin = victim( {
             paths: {
-                apis: apiPath
+                routes: routesPath
             }
         } );
         plugin( server );
@@ -108,11 +108,11 @@ describe( 'Apigeon: /core/webserver/ws.js', function () {
         } );
     } );
 
-    it( 'should return an error message from api (can be used multiple times)', function ( done ) {
+    it( 'should return an error message from route (can be used multiple times)', function ( done ) {
         var server = http.createServer();
         var plugin = victim( {
             paths: {
-                apis: apiPath
+                routes: routesPath
             }
         } );
         plugin( server );
@@ -138,11 +138,11 @@ describe( 'Apigeon: /core/webserver/ws.js', function () {
         } );
     } );
 
-    it( 'should call api terminate at the end of socket', function ( done ) {
+    it( 'should call route terminate at the end of socket', function ( done ) {
         var server = http.createServer();
         var plugin = victim( {
             paths: {
-                apis: apiPath
+                routes: routesPath
             }
         } );
         plugin( server );
@@ -152,7 +152,7 @@ describe( 'Apigeon: /core/webserver/ws.js', function () {
                 client.send( 'Hi' );
             } );
             client.on( 'close', function open() {
-                expect( global[ 'terminated_api' ] ).to.equal( true );
+                expect( global[ 'terminated_route' ] ).to.equal( true );
                 instance.close( done );
             } );
             client.on( 'message', function ( data ) {

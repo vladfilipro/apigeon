@@ -4,7 +4,7 @@ var Config = require( __dirname + '/../libs/configClass' );
 var extendReq = require( __dirname + '/../libs/extendReq' );
 var ErrorClass = require( __dirname + '/../libs/errorClass' );
 var RendererClass = require( __dirname + '/../libs/rendererClass' );
-var loadApi = require( __dirname + '/../libs/loadApi' );
+var loadRoute = require( __dirname + '/../libs/loadRoute' );
 
 module.exports = function ( config ) {
 
@@ -16,19 +16,19 @@ module.exports = function ( config ) {
 
             extendReq( req, config.get() );
 
-            var api = loadApi( config.get( 'paths' ).apis, req.pathname, req );
-            var renderer = new RendererClass( config.get( 'paths' ).renderers, api, req.headers.accept );
+            var route = loadRoute( config.get( 'paths' ).routes, req.pathname, req );
+            var renderer = new RendererClass( config.get( 'paths' ).renderers, route, req.headers.accept );
 
             res.setHeader( 'Content-type', renderer.contentType );
 
             var error = false;
-            if ( !api ) {
+            if ( !route ) {
                 error = new ErrorClass( 404, config.get( 'errors' )[ '404' ] );
             } else {
-                if ( !api.methodAllowed( req.method ) ) {
+                if ( !route.methodAllowed( req.method ) ) {
                     error = new ErrorClass( 405, config.get( 'errors' )[ '405' ] );
                 }
-                if ( !api.protocolAllowed( req.protocol ) ) {
+                if ( !route.protocolAllowed( req.protocol ) ) {
                     error = new ErrorClass( 403, config.get( 'errors' )[ '403' ] );
                 }
             }
@@ -46,12 +46,12 @@ module.exports = function ( config ) {
                 res.end( renderer.render( data ) );
             };
 
-            api._getData( function ( data, code ) {
+            route._getData( function ( data, code ) {
                 proccessRequest( data, code );
-                api.terminate();
+                route.terminate();
             }, function ( error ) {
                 proccessRequest( error.getMessage(), error.getCode() );
-                api.terminate();
+                route.terminate();
             } );
 
         } );

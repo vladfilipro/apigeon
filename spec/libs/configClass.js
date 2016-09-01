@@ -22,11 +22,11 @@ describe( 'Apigeon: /core/libs/configClass.js', function () {
     it( 'should be able to create a config instance based on an object', function ( done ) {
         var o = new Victim( {
             paths: {
-                apis: 'test'
+                routes: 'test'
             }
         } );
         expect( o.get( 'paths' ) ).to.be.a( 'object' );
-        expect( o.get( 'paths' ).apis ).to.equal( 'test' );
+        expect( o.get( 'paths' ).routes ).to.equal( 'test' );
         done();
     } );
 

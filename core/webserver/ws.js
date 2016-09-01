@@ -5,7 +5,7 @@ var extendReq = require( __dirname + '/../libs/extendReq' );
 var WebSocketServer = require( 'ws' ).Server;
 var ErrorClass = require( __dirname + '/../libs/errorClass' );
 var RendererClass = require( __dirname + '/../libs/rendererClass' );
-var loadApi = require( __dirname + '/../libs/loadApi' );
+var loadRoute = require( __dirname + '/../libs/loadRoute' );
 
 module.exports = function ( config ) {
 
@@ -22,17 +22,17 @@ module.exports = function ( config ) {
 
             extendReq( req, config.get() );
 
-            var api = loadApi( config.get( 'paths' ).apis, req.pathname, req );
-            var renderer = new RendererClass( config.get( 'paths' ).renderers, api, req.headers.accept );
+            var route = loadRoute( config.get( 'paths' ).routes, req.pathname, req );
+            var renderer = new RendererClass( config.get( 'paths' ).renderers, route, req.headers.accept );
 
             var error = false;
-            if ( !api ) {
+            if ( !route ) {
                 error = new ErrorClass( 404, config.get( 'errors' )[ '404' ] );
             } else {
-                if ( !api.methodAllowed( 'SOCKET' ) ) {
+                if ( !route.methodAllowed( 'SOCKET' ) ) {
                     error = new ErrorClass( 405, config.get( 'errors' )[ '405' ] );
                 }
-                if ( !api.protocolAllowed( req.protocol ) ) {
+                if ( !route.protocolAllowed( req.protocol ) ) {
                     error = new ErrorClass( 403, config.get( 'errors' )[ '403' ] );
                 }
             }
@@ -44,7 +44,7 @@ module.exports = function ( config ) {
 
             socket.on( 'message', function ( message ) {
                 req.body = message;
-                api._getData( function ( data ) {
+                route._getData( function ( data ) {
                     socket.send( renderer.render( data ) );
                 }, function ( error ) {
                     socket.send( renderer.render( error.getMessage() ) );
@@ -52,7 +52,7 @@ module.exports = function ( config ) {
             } );
 
             socket.on( 'close', function () {
-                api.terminate();
+                route.terminate();
             } );
 
         } );

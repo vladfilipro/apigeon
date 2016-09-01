@@ -5,7 +5,7 @@ var http = require( 'http' );
 var victim = require( './../../core/webserver/rest.js' );
 var request = require( 'supertest' );
 var path = require( 'path' );
-var apiPath = path.dirname( require.resolve( './fakeApis/dummy.js' ) );
+var routesPath = path.dirname( require.resolve( './fakeRoutes/dummy.js' ) );
 
 describe( 'Apigeon: /core/webserver/rest.js', function () {
 
@@ -102,7 +102,7 @@ describe( 'Apigeon: /core/webserver/rest.js', function () {
         var server = http.createServer();
         var plugin = victim( {
             paths: {
-                apis: apiPath
+                routes: routesPath
             }
         } );
         plugin( server );
@@ -121,11 +121,11 @@ describe( 'Apigeon: /core/webserver/rest.js', function () {
         } );
     } );
 
-    it( 'should output result of api', function ( done ) {
+    it( 'should output result of route', function ( done ) {
         var server = http.createServer();
         var plugin = victim( {
             paths: {
-                apis: apiPath
+                routes: routesPath
             }
         } );
         plugin( server );
@@ -148,7 +148,7 @@ describe( 'Apigeon: /core/webserver/rest.js', function () {
         var server = http.createServer();
         var plugin = victim( {
             paths: {
-                apis: apiPath
+                routes: routesPath
             }
         } );
         plugin( server );
@@ -172,7 +172,7 @@ describe( 'Apigeon: /core/webserver/rest.js', function () {
         var server = http.createServer();
         var plugin = victim( {
             paths: {
-                apis: apiPath
+                routes: routesPath
             }
         } );
         plugin( server );
@@ -195,11 +195,11 @@ describe( 'Apigeon: /core/webserver/rest.js', function () {
         } );
     } );
 
-    it( 'should call api terminate at the end of execute, on success', function ( done ) {
+    it( 'should call route terminate at the end of execute, on success', function ( done ) {
         var server = http.createServer();
         var plugin = victim( {
             paths: {
-                apis: apiPath
+                routes: routesPath
             }
         } );
         plugin( server );
@@ -212,17 +212,17 @@ describe( 'Apigeon: /core/webserver/rest.js', function () {
                         console.log( err );
                         throw err;
                     }
-                    expect( global[ 'terminated_api' ] ).to.equal( true );
+                    expect( global[ 'terminated_route' ] ).to.equal( true );
                     instance.close( done );
                 } );
         } );
     } );
 
-    it( 'should call api terminate at the end of execute, on error', function ( done ) {
+    it( 'should call route terminate at the end of execute, on error', function ( done ) {
         var server = http.createServer();
         var plugin = victim( {
             paths: {
-                apis: apiPath
+                routes: routesPath
             }
         } );
         plugin( server );
@@ -235,7 +235,7 @@ describe( 'Apigeon: /core/webserver/rest.js', function () {
                         console.log( err );
                         throw err;
                     }
-                    expect( global[ 'terminated_api' ] ).to.equal( true );
+                    expect( global[ 'terminated_route' ] ).to.equal( true );
                     instance.close( done );
                 } );
         } );
@@ -245,7 +245,7 @@ describe( 'Apigeon: /core/webserver/rest.js', function () {
         var server = http.createServer();
         var plugin = victim( {
             paths: {
-                apis: apiPath
+                routes: routesPath
             }
         } );
         plugin( server );
@@ -265,11 +265,11 @@ describe( 'Apigeon: /core/webserver/rest.js', function () {
         } );
     } );
 
-    it( 'should respect apis methodAllowed returns', function ( done ) {
+    it( 'should respect routes methodAllowed returns', function ( done ) {
         var server = http.createServer();
         var plugin = victim( {
             paths: {
-                apis: apiPath
+                routes: routesPath
             }
         } );
         plugin( server );
@@ -287,11 +287,11 @@ describe( 'Apigeon: /core/webserver/rest.js', function () {
         } );
     } );
 
-    it( 'should respect apis protocolAllowed returns', function ( done ) {
+    it( 'should respect routes protocolAllowed returns', function ( done ) {
         var server = http.createServer();
         var plugin = victim( {
             paths: {
-                apis: apiPath
+                routes: routesPath
             }
         } );
         server.on( 'request', function ( req ) {

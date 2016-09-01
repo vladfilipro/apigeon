@@ -8,7 +8,7 @@ function Config( config ) {
 
     var defaults = {
         paths: {
-            apis: null,
+            routes: null,
             drivers: null,
             renderers: null
         },

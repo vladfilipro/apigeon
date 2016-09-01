@@ -24,20 +24,20 @@ var schema = {
     }
 };
 
-module.exports = function ( apisPath, pathname, request ) {
+module.exports = function ( routesPath, pathname, request ) {
 
-    var ApiClass = utils.getFile( pathname, [ apisPath, __dirname + '/../../api' ] );
+    var RouteClass = utils.getFile( pathname, [ routesPath, __dirname + '/../../routes' ] );
 
-    if ( !ApiClass ) {
+    if ( !RouteClass ) {
         return false;
     }
 
     Object.keys( schema ).forEach( function ( prop ) {
-        ApiClass.prototype[ prop ] = schema[ prop ];
+        RouteClass.prototype[ prop ] = schema[ prop ];
     } );
 
-    ApiClass.prototype.Error = ErrorClass;
-    var instance = new ApiClass();
+    RouteClass.prototype.Error = ErrorClass;
+    var instance = new RouteClass();
     instance.request = request;
     instance._getData = function ( callback, errorCallback ) {
         if ( !instance.hasAccess( request ) ) {

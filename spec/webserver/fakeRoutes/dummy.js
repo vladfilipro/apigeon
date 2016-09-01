@@ -14,7 +14,7 @@ module.exports = function () {
     };
 
     this.terminate = function () {
-        global[ 'terminated_api' ] = true;
+        global[ 'terminated_route' ] = true;
     };
 
 };

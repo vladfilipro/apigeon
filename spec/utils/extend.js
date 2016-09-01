@@ -92,7 +92,7 @@ describe( 'Apigeon: /core/utils/extend.js', function () {
     it( 'should extend deep properties', function ( done ) {
         var output = victim( {
             paths: {
-                apis: null,
+                routes: null,
                 drivers: null,
                 renderers: null
             },
@@ -100,13 +100,13 @@ describe( 'Apigeon: /core/utils/extend.js', function () {
             httpsOptions: null
         }, {
             paths: {
-                apis: '/Users/vladfilip/projects/vladfilip/apigeon/spec/webserver/fakeApis'
+                routes: '/apigeon/spec/webserver/fakeRoutes'
             },
             name: 'new'
         } );
         expect( output ).to.eql( {
             paths: {
-                apis: '/Users/vladfilip/projects/vladfilip/apigeon/spec/webserver/fakeApis',
+                routes: '/apigeon/spec/webserver/fakeRoutes',
                 drivers: null,
                 renderers: null
             },

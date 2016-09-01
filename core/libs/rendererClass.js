@@ -2,12 +2,12 @@
 
 var utils = require( __dirname + '/../utils' );
 
-module.exports = function ( renderersPath, api, acceptedContentTypes ) {
+module.exports = function ( renderersPath, route, acceptedContentTypes ) {
 
     var fallbackRenderer = 'text/plain';
     var emptyRender = 'empty';
 
-    var defaultRenderers = ( api ) ? api.getAcceptedRenderers() : true;
+    var defaultRenderers = ( route ) ? route.getAcceptedRenderers() : true;
 
     var acceptedContentTypesList;
 
