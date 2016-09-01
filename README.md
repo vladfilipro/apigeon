@@ -33,9 +33,9 @@ module.exports = function () {
 NOTE: The structure of the `routes` folder determines the url required to access it.
 
 ```
-+routes                   | not accessable by url
++routes                   | not accessible by url
     /index.js             | http://example.com/
-    +users                | not accessable by url
+    +users                | not accessible by url
         /index.js         | http://example.com/users
         /create.js        | http://example.com/users/create
 ```

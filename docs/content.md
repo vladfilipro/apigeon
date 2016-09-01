@@ -10,11 +10,11 @@ Middlewares        | Information on available middlewares as well as guides on c
 
 ## Classes
 
-Chapter   | Description
---------- | ---------------------------------------------
-Routes    | Provides information on the `Route Class`
-Renderers | Provides information on the `Renderers Class`
-Drivers   | Provides information on the `Drivers Class`
+Chapter  | Description
+-------- | --------------------------------------------
+Route    | Provides information on the `Route Class`
+Renderer | Provides information on the `Renderer Class`
+Driver   | Provides information on the `Driver Class`
 
 ## Server types
 
