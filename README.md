@@ -4,6 +4,8 @@ An npm plugin to generate an server application. It can be used with either stan
 
 [![NPM version][npm-image]][npm-url] [![Dependency Status][depstat-image]][depstat-url]
 
+## For additional information on how to use, please refer to our [documentation](https://github.com/vladfilipro/apigeon/blob/master/docs/content.md).
+
 ## Basic usage
 
 First step is always to install apigeon:
@@ -31,7 +33,7 @@ module.exports = function () {
 NOTE: The structure of the `routes` folder determines the url required to access it.
 
 ```
-+routes                     | not accessable by url
++routes                   | not accessable by url
     /index.js             | http://example.com/
     +users                | not accessable by url
         /index.js         | http://example.com/users
@@ -64,8 +66,6 @@ Once your routes are defined, in your route folder, create a file `server.js` wi
 ```
 
 To test your server run `node server.js`. At this point you can reach the routes you created by using the correct urls.
-
-### For additional information on how to use Apigeon, please refer to our [documentation](https://github.com/vladfilipro/apigeon/blob/master/docs/content.md).
 
 [depstat-image]: https://david-dm.org/vladfilipro/apigeon.png
 [depstat-url]: https://david-dm.org/vladfilipro/apigeon

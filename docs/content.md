@@ -24,3 +24,5 @@ REST      | Detailed information on how Apigeon can work as a `REST` server
 WEBSOCKET | Detailed information on how Apigeon can work as a `WEBSOCKET` server
 
 - Apigeon can be configured to use multiple types on the same server instance.
+
+### Examples:
