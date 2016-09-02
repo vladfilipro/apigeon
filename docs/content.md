@@ -28,17 +28,4 @@ WEBSOCKET | Detailed information on how Apigeon can work as a `WEBSOCKET` server
 
 - Apigeon can be configured to use multiple types on the same server instance.
 
-### Examples:
-
-`session` middleware Custom middleware | Additional information on how middlewares work, and how to create your own
-
-## Server types
-
-Chapter   | Description
---------- | --------------------------------------------------------------------
-REST      | Detailed information on how Apigeon can work as a `REST` server
-WEBSOCKET | Detailed information on how Apigeon can work as a `WEBSOCKET` server
-
-- Apigeon can be configured to use multiple types on the same server instance.
-
-### Examples:
+### Getting started:
