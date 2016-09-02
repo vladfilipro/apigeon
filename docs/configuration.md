@@ -41,13 +41,13 @@ server.start( 8000 );
 
 `errors` - `{ Object }` - The object contains the error pages. Standard error pages defined are as follows:
 
-Chapter | Description
-------- | -------------------
-403     | Access denied.
-404     | Page not found.
-405     | Method not allowed.
-500     | There was an error.
-502     | Not Implemented.
+Code | Description
+---- | -------------------
+403  | Access denied.
+404  | Page not found.
+405  | Method not allowed.
+500  | There was an error.
+502  | Not Implemented.
 
 - You can add your own custom error and use them through the ErrorClass
 
