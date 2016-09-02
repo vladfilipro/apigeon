@@ -21,7 +21,8 @@ module.exports = function ( config, logsConfig ) {
             id: utils.uniqueId(),
             ip: req.socket.remoteAddress,
             route: req.url,
-            agent: req.headers[ 'User-Agent' ]
+            agent: req.headers[ 'User-Agent' ],
+            timestamp: ( new Date() ).getTime()
         } );
         req.logs = logs;
 
