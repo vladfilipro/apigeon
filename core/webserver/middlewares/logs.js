@@ -13,7 +13,7 @@ module.exports = function ( config, logsConfig ) {
 
     config = loadConfig( config );
 
-    return function ( req ) {
+    return function ( req, res, done ) {
 
         // Initialize logging
         var logs = new LogsClass( config.paths.drivers, logsConfig );
@@ -26,6 +26,7 @@ module.exports = function ( config, logsConfig ) {
         } );
         req.logs = logs;
 
+        done();
     };
 
 };

@@ -10,6 +10,7 @@ function Apigeon( options ) {
     var config = new Config( options );
 
     var server = null;
+    var middlewares = [];
 
     if ( !config.get( 'httpsOptions' ) ) {
         server = http.createServer();
@@ -27,8 +28,22 @@ function Apigeon( options ) {
         } );
     } );
 
-    server.on( 'request', function ( req ) {
+    server.on( 'request', function ( req, res ) {
+
+        // extend request
         extendReq( req, config.get() );
+
+        // run middlewares
+        var executeMiddleware = function ( i ) {
+            i = i || 0;
+            if ( middlewares.length > i ) {
+                middlewares[ i ]( req, res, function () {
+                    executeMiddleware( i + 1 );
+                } );
+            }
+        };
+        executeMiddleware();
+
     } );
 
     this.start = function ( port, done ) {
@@ -64,11 +79,11 @@ function Apigeon( options ) {
 
     this.attach = function ( middleware ) {
         if ( typeof middleware === 'function' ) {
-            server.on( 'request', middleware );
+            middlewares.push( middleware );
         }
     };
 
-    var middlewares = {
+    var predefinedMiddlewares = {
         session: function ( sessionConfig ) {
             return require( __dirname + '/webserver/middlewares/session' )( config, sessionConfig );
         },
@@ -77,7 +92,7 @@ function Apigeon( options ) {
         }
     };
 
-    this.middlewares = middlewares;
+    this.middlewares = predefinedMiddlewares;
 }
 
 module.exports = Apigeon;

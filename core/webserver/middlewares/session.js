@@ -24,7 +24,7 @@ module.exports = function ( config, sessionConfig ) {
 
     config = loadConfig( config );
 
-    return function ( req, res ) {
+    return function ( req, res, done ) {
 
         var session = new SessionClass( config.paths.drivers, sessionConfig );
 
@@ -36,6 +36,7 @@ module.exports = function ( config, sessionConfig ) {
         session.start( req.query.sessionid || headerSessionId || cookies.parse( req.headers.cookie ).session ).then( function () {
             res.setHeader( 'set-cookie', cookies.format( 'session', session.getSessionId() ) );
             req.session = session;
+            done();
         } );
 
     };

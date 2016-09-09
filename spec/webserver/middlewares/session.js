@@ -15,7 +15,9 @@ function DummyServer( input ) {
         var location = url.parse( req.url, true );
         req.query = location.query;
     } );
-    server.on( 'request', victim() );
+    server.on( 'request', function ( req, res ) {
+        victim()( req, res, function () {} );
+    } );
 
     this.addServerReply = function ( f ) {
         server.on( 'request', f );
@@ -48,16 +50,18 @@ describe( 'Apigeon: /core/webserver/middlewares/session.js', function () {
         done();
     } );
 
-    it( 'should return a function with 2 parameters', function ( done ) {
+    it( 'should return a function with 3 parameters', function ( done ) {
         var plugin = victim();
         expect( plugin ).to.be.a( 'function' );
-        expect( plugin ).to.have.length( 2 );
+        expect( plugin ).to.have.length( 3 );
         done();
     } );
 
     it( 'should attach a session instance to the request object when used', function ( done ) {
         var server = http.createServer();
-        server.on( 'request', victim() );
+        server.on( 'request', function ( req, res ) {
+            victim()( req, res, function () {} );
+        } );
         server.on( 'request', function ( req, res ) {
             res.end( '' );
         } );

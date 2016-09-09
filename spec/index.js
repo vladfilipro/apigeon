@@ -83,7 +83,7 @@ describe( 'Apigeon: core', function () {
     it( 'should provide a session middleware', function ( done ) {
         var apigeon = new Apigeon();
         expect( apigeon.middlewares.session() ).to.be.a( 'function' );
-        expect( apigeon.middlewares.session() ).to.have.length( 2 );
+        expect( apigeon.middlewares.session() ).to.have.length( 3 );
         done();
     } );
 
@@ -97,7 +97,7 @@ describe( 'Apigeon: core', function () {
     it( 'should provide a logs middleware', function ( done ) {
         var apigeon = new Apigeon();
         expect( apigeon.middlewares.logs() ).to.be.a( 'function' );
-        expect( apigeon.middlewares.logs() ).to.have.length( 1 );
+        expect( apigeon.middlewares.logs() ).to.have.length( 3 );
         done();
     } );
 

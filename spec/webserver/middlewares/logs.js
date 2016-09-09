@@ -13,17 +13,19 @@ describe( 'Apigeon: /core/webserver/middlewares/logs.js', function () {
         done();
     } );
 
-    it( 'should return a function with 1 parameters', function ( done ) {
+    it( 'should return a function with 3 parameters', function ( done ) {
         var plugin = victim();
         expect( plugin ).to.be.a( 'function' );
-        expect( plugin ).to.have.length( 1 );
+        expect( plugin ).to.have.length( 3 );
         done();
     } );
 
     it( 'should attach a logs instance to the request object when used', function ( done ) {
         var response = 'hello';
         var server = http.createServer();
-        server.on( 'request', victim() );
+        server.on( 'request', function ( req, res ) {
+            victim()( req, res, function () {} );
+        } );
         server.on( 'request', function ( req, res ) {
             expect( req.logs ).to.be.an.instanceof( require( './../../../core/libs/logsClass' ) );
             res.end( response );
