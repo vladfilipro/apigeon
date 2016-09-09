@@ -3,7 +3,6 @@
 var Config = require( __dirname + '/../libs/configClass' );
 var extendReq = require( __dirname + '/../libs/extendReq' );
 var ErrorClass = require( __dirname + '/../libs/errorClass' );
-var RendererClass = require( __dirname + '/../libs/rendererClass' );
 var loadRoute = require( __dirname + '/../libs/loadRoute' );
 
 module.exports = function ( config ) {
@@ -17,9 +16,6 @@ module.exports = function ( config ) {
             extendReq( req, config.get() );
 
             var route = loadRoute( config.get( 'paths' ).routes, req.pathname, req );
-            var renderer = new RendererClass( config.get( 'paths' ).renderers, route, req.headers.accept );
-
-            res.setHeader( 'Content-type', renderer.contentType );
 
             var error = false;
             if ( !route ) {
@@ -34,20 +30,23 @@ module.exports = function ( config ) {
             }
             if ( error ) {
                 res.statusCode = error.getCode();
-                res.end( renderer.render( error.getMessage() ) );
+                res.end( error.getMessage() );
                 return;
             }
 
-            var proccessRequest = function ( data, code ) {
+            var proccessRequest = function ( data, code, headers ) {
                 res.statusCode = code;
-                if ( code > 300 && code < 400 ) {
-                    res.setHeader( 'Location', data );
+                if ( headers && typeof headers === 'object' ) {
+                    var headerNames = Object.keys( headers );
+                    for ( var i = 0, l = headerNames.length; i < l; i++ ) {
+                        res.setHeader( headerNames[ i ], headers[ headerNames[ i ] ] );
+                    }
                 }
-                res.end( renderer.render( data ) );
+                res.end( data );
             };
 
-            route._getData( function ( data, code ) {
-                proccessRequest( data, code );
+            route._getData( function ( data, code, headers ) {
+                proccessRequest( data, code, headers );
                 route.terminate();
             }, function ( error ) {
                 proccessRequest( error.getMessage(), error.getCode() );

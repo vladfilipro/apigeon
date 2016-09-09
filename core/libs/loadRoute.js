@@ -4,9 +4,6 @@ var ErrorClass = require( __dirname + '/errorClass' );
 var utils = require( __dirname + '/../utils' );
 
 var schema = {
-    getAcceptedRenderers: function () {
-        return true;
-    },
     hasAccess: function () { // request
         return true;
     },
@@ -44,8 +41,8 @@ module.exports = function ( routesPath, pathname, request ) {
             errorCallback( new ErrorClass( 403 ) );
             return;
         }
-        instance.execute( request, function ( data, code ) {
-            callback( data, code || 200 );
+        instance.execute( request, function ( data, code, headers ) {
+            callback( data, code || 200, headers );
         }, errorCallback );
     };
     return instance;

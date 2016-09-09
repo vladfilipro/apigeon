@@ -20,8 +20,7 @@ server.start( 8000 );
 {
     paths: {
         routes: null,
-        drivers: null,
-        renderers: null
+        drivers: null
     },
     errors: {},
     rewrite: function ( url ) {
@@ -37,7 +36,6 @@ server.start( 8000 );
 
 - `routes` - A string containing the path to the folder containing your routes
 - `drivers` - A string containing the path to the folder containing your drivers
-- `renderers` - A string containing the path to the folder containing your renderers
 
 `errors` - `{ Object }` - The object contains the error pages. Standard error pages defined are as follows:
 

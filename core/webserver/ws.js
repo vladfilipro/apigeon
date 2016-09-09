@@ -4,7 +4,6 @@ var Config = require( __dirname + '/../libs/configClass' );
 var extendReq = require( __dirname + '/../libs/extendReq' );
 var WebSocketServer = require( 'ws' ).Server;
 var ErrorClass = require( __dirname + '/../libs/errorClass' );
-var RendererClass = require( __dirname + '/../libs/rendererClass' );
 var loadRoute = require( __dirname + '/../libs/loadRoute' );
 
 module.exports = function ( config ) {
@@ -23,7 +22,6 @@ module.exports = function ( config ) {
             extendReq( req, config.get() );
 
             var route = loadRoute( config.get( 'paths' ).routes, req.pathname, req );
-            var renderer = new RendererClass( config.get( 'paths' ).renderers, route, req.headers.accept );
 
             var error = false;
             if ( !route ) {
@@ -37,7 +35,7 @@ module.exports = function ( config ) {
                 }
             }
             if ( error ) {
-                socket.send( renderer.render( error.getMessage() ) );
+                socket.send( error.getMessage() );
                 socket.close();
                 return;
             }
@@ -45,9 +43,9 @@ module.exports = function ( config ) {
             socket.on( 'message', function ( message ) {
                 req.body = message;
                 route._getData( function ( data ) {
-                    socket.send( renderer.render( data ) );
+                    socket.send( data );
                 }, function ( error ) {
-                    socket.send( renderer.render( error.getMessage() ) );
+                    socket.send( error.getMessage() );
                 } );
             } );
 

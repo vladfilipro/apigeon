@@ -9,8 +9,7 @@ function Config( config ) {
     var defaults = {
         paths: {
             routes: null,
-            drivers: null,
-            renderers: null
+            drivers: null
         },
         errors: {},
         rewrite: function ( url ) {

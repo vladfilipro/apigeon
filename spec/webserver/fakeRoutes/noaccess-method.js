@@ -7,9 +7,7 @@ module.exports = function () {
     };
 
     this.execute = function ( req, cb ) {
-        cb( {
-            name: 'Hello'
-        } );
+        cb( 'Hello' );
     };
 
 };

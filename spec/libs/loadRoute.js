@@ -30,7 +30,6 @@ describe( 'Apigeon: /core/libs/loadRoute.js', function () {
         var route = victim( routesFolder, '/empty', {
             'request': true
         } );
-        expect( route ).to.respondTo( 'getAcceptedRenderers' );
         expect( route ).to.respondTo( 'hasAccess' );
         expect( route ).to.respondTo( 'methodAllowed' );
         expect( route ).to.respondTo( 'protocolAllowed' );
@@ -41,12 +40,6 @@ describe( 'Apigeon: /core/libs/loadRoute.js', function () {
         expect( route.request ).to.eql( {
             'request': true
         } );
-        done();
-    } );
-
-    it( 'method getAcceptedRenderers should return true by default', function ( done ) {
-        var route = victim( routesFolder, '/empty', {} );
-        expect( route.getAcceptedRenderers() ).to.equal( true );
         done();
     } );
 

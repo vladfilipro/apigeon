@@ -93,8 +93,7 @@ describe( 'Apigeon: /core/utils/extend.js', function () {
         var output = victim( {
             paths: {
                 routes: null,
-                drivers: null,
-                renderers: null
+                drivers: null
             },
             errors: {},
             httpsOptions: null
@@ -107,8 +106,7 @@ describe( 'Apigeon: /core/utils/extend.js', function () {
         expect( output ).to.eql( {
             paths: {
                 routes: '/apigeon/spec/webserver/fakeRoutes',
-                drivers: null,
-                renderers: null
+                drivers: null
             },
             errors: {},
             httpsOptions: null,

@@ -5,7 +5,7 @@ var messages = {
     '404': 'Page not found.',
     '405': 'Method not allowed.',
     '500': 'There was an error.',
-    '502': 'Not Implemented.'
+    '501': 'Not Implemented.'
 };
 
 module.exports = function ( code, errorMessage ) {
@@ -28,6 +28,6 @@ module.exports = function ( code, errorMessage ) {
         } else {
             output.error.message = message;
         }
-        return output;
+        return JSON.stringify( output );
     };
 };

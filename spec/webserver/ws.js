@@ -23,7 +23,7 @@ describe( 'Apigeon: /core/webserver/ws.js', function () {
         done();
     } );
 
-    it( 'should enable websockets on the express application', function ( done ) {
+    it( 'should enable websockets on the application', function ( done ) {
         var server = http.createServer();
         var plugin = victim();
         plugin( server );
@@ -34,7 +34,7 @@ describe( 'Apigeon: /core/webserver/ws.js', function () {
             } );
             client.on( 'message', function ( data ) {
                 var error = new ErrorClass( 404 );
-                expect( data ).to.equal( JSON.stringify( error.getMessage() ) );
+                expect( data ).to.equal( error.getMessage() );
             } );
         } );
     } );
@@ -54,7 +54,7 @@ describe( 'Apigeon: /core/webserver/ws.js', function () {
             } );
             client.on( 'message', function ( data ) {
                 var error = new ErrorClass( 405 );
-                expect( data ).to.equal( JSON.stringify( error.getMessage() ) );
+                expect( data ).to.equal( error.getMessage() );
             } );
         } );
     } );
@@ -74,7 +74,7 @@ describe( 'Apigeon: /core/webserver/ws.js', function () {
             } );
             client.on( 'message', function ( data ) {
                 var error = new ErrorClass( 403 );
-                expect( data ).to.equal( JSON.stringify( error.getMessage() ) );
+                expect( data ).to.equal( error.getMessage() );
             } );
         } );
     } );
@@ -127,7 +127,7 @@ describe( 'Apigeon: /core/webserver/ws.js', function () {
             var count = 0;
             client.on( 'message', function ( data ) {
                 var error = new ErrorClass( 500 );
-                expect( data ).to.equal( JSON.stringify( error.getMessage() ) );
+                expect( data ).to.equal( error.getMessage() );
                 count++;
                 if ( count === 3 ) {
                     client.terminate();

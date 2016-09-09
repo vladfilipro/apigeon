@@ -98,29 +98,6 @@ describe( 'Apigeon: /core/webserver/rest.js', function () {
         } );
     } );
 
-    it( 'should start a simple rest server which accepts GET method and uses default renderer if not defined', function ( done ) {
-        var server = http.createServer();
-        var plugin = victim( {
-            paths: {
-                routes: routesPath
-            }
-        } );
-        plugin( server );
-        var instance = server.listen( '8000', function () {
-            request( instance )
-                .get( '/dummy' )
-                .expect( 200 )
-                .end( function ( err, res ) {
-                    if ( err ) {
-                        console.log( err );
-                        throw err;
-                    }
-                    expect( res.text ).to.equal( 'Hello' );
-                    instance.close( done );
-                } );
-        } );
-    } );
-
     it( 'should output result of route', function ( done ) {
         var server = http.createServer();
         var plugin = victim( {
@@ -139,57 +116,6 @@ describe( 'Apigeon: /core/webserver/rest.js', function () {
                         throw err;
                     }
                     expect( res.statusCode ).to.equal( 500 );
-                    instance.close( done );
-                } );
-        } );
-    } );
-
-    it( 'should return renderer as content type', function ( done ) {
-        var server = http.createServer();
-        var plugin = victim( {
-            paths: {
-                routes: routesPath
-            }
-        } );
-        plugin( server );
-        var instance = server.listen( '8000', function () {
-            request( instance )
-                .get( '/dummy' )
-                .expect( 200 )
-                .end( function ( err, res ) {
-                    if ( err ) {
-                        console.log( err );
-                        throw err;
-                    }
-                    expect( res.headers[ 'content-type' ] ).to.equal( 'text/plain' );
-                    expect( res.text ).to.equal( 'Hello' );
-                    instance.close( done );
-                } );
-        } );
-    } );
-
-    it( 'should send accept header to renderer', function ( done ) {
-        var server = http.createServer();
-        var plugin = victim( {
-            paths: {
-                routes: routesPath
-            }
-        } );
-        plugin( server );
-        var instance = server.listen( '8000', function () {
-            request( instance )
-                .get( '/lockedrenderer' )
-                .set( 'Accept', 'application/json' )
-                .expect( 200 )
-                .end( function ( err, res ) {
-                    if ( err ) {
-                        console.log( err );
-                        throw err;
-                    }
-                    expect( res.headers[ 'content-type' ] ).to.equal( 'application/json' );
-                    expect( res.text ).to.equal( JSON.stringify( {
-                        'name': 'Hello'
-                    } ) );
                     instance.close( done );
                 } );
         } );
