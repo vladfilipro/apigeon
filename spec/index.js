@@ -130,6 +130,30 @@ describe( 'Apigeon: core', function () {
         } );
     } );
 
+    it( 'should be able to start an http server with multiple middlewares', function ( done ) {
+        var apigeon = new Apigeon();
+        apigeon.attach( function ( req, res, done ) {
+            res.write( 'Hello' );
+            setTimeout( function () {
+                req.counter = 100;
+                done();
+            }, 100 );
+        } );
+        apigeon.attach( function ( req, res, done ) {
+            res.end( ' World ' + req.counter );
+            done();
+        } );
+        var instance = apigeon.start( 8000, function () {
+            request( instance )
+                .get( '/' )
+                .expect( 200 )
+                .end( function ( e, res ) {
+                    expect( res.text ).to.equal( 'Hello World 100' );
+                    instance.close( done );
+                } );
+        } );
+    } );
+
     it( 'should extend the req object', function ( done ) {
         var apigeon = new Apigeon();
         apigeon.attach( function ( req, res ) {
