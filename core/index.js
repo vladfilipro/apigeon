@@ -28,7 +28,7 @@ function Apigeon( options ) {
         } );
     } );
 
-    server.on( 'request', function ( req, res ) {
+    var executeMiddlewares = function( req, res, cb ) {
 
         // extend request
         extendReq( req, config.get() );
@@ -40,11 +40,13 @@ function Apigeon( options ) {
                 middlewares[ i ]( req, res, function () {
                     executeMiddleware( i + 1 );
                 } );
+            } else {
+                cb();
             }
         };
         executeMiddleware();
 
-    } );
+    };
 
     this.start = function ( port, done ) {
         return server.listen( port, done );
@@ -70,11 +72,11 @@ function Apigeon( options ) {
     };
 
     this.enableREST = function () {
-        require( __dirname + '/webserver/rest' )( config )( server );
+        require( __dirname + '/webserver/rest' )( config )( server, executeMiddlewares );
     };
 
     this.enableWS = function () {
-        require( __dirname + '/webserver/ws' )( config )( server );
+        require( __dirname + '/webserver/ws' )( config )( server, executeMiddlewares );
     };
 
     this.attach = function ( middleware ) {

@@ -10,7 +10,12 @@ module.exports = function ( config ) {
 
     config = new Config( config );
 
-    return function ( server ) {
+    return function ( server, middlewares ) {
+
+        server.on( 'request', function ( req, res ) {
+            extendReq( req, config.get() );
+            middlewares( req, res );
+        } );
 
         var ws = new WebSocketServer( {
             server: server
@@ -18,8 +23,6 @@ module.exports = function ( config ) {
 
         ws.on( 'connection', function ( socket ) {
             var req = socket.upgradeReq;
-
-            extendReq( req, config.get() );
 
             var route = loadRoute( config.get( 'paths' ).routes, req.pathname, req );
 
