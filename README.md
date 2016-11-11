@@ -2,10 +2,6 @@
 
 An npm plugin to generate an server application. It can be used with either standard http requests or websockets.
 
-[![NPM version][npm-image]][npm-url] [![Dependency Status][depstat-image]][depstat-url]
-
-## For additional information on how to use, please refer to our [documentation](https://github.com/vladfilipro/apigeon/blob/master/docs/content.md).
-
 ## Basic usage
 
 First step is always to install apigeon:
@@ -66,8 +62,3 @@ Once your routes are defined, in your route folder, create a file `server.js` wi
 ```
 
 To test your server run `node server.js`. At this point you can reach the routes you created by using the correct urls.
-
-[depstat-image]: https://david-dm.org/vladfilipro/apigeon.png
-[depstat-url]: https://david-dm.org/vladfilipro/apigeon
-[npm-image]: https://badge.fury.io/js/apigeon.png
-[npm-url]: https://npmjs.org/package/apigeon

@@ -20,17 +20,5 @@
     },
     "dependencies": {
         "ws": "1.1.1"
-    },
-    "devDependencies": {
-        "rigs": "*",
-        "rig-javascript": "*",
-        "rig-unit-test": "*",
-        "chai": "3.5.0",
-        "run-sequence": "1.2.2",
-        "supertest": "2.0.0"
-    },
-    "scripts": {
-        "start": "npm outdated && ./node_modules/.bin/rigs && ./node_modules/.bin/gulp init",
-        "test": "./node_modules/.bin/gulp test"
     }
 }

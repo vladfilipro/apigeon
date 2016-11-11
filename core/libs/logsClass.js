@@ -1,39 +1,37 @@
-'use strict';
+'use strict'
 
-var utils = require( __dirname + '/../utils' );
+var utils = require( __dirname + '/../utils' )
 
-module.exports = function Logs( driversPath, config ) {
+module.exports = function Logs ( driversPath, config ) {
+  var data = {}
 
-    var data = {};
+  config = config || {}
+  config.driver = config.driver || 'memory'
+  config.table = config.table || 'logs'
 
-    config = config || {};
-    config.driver = config.driver || 'memory';
-    config.table = config.table || 'logs';
+  var dbDriver = utils.getFile( config.driver, [ driversPath, __dirname + '/../drivers' ] )
 
-    var dbDriver = utils.getFile( config.driver, [ driversPath, __dirname + '/../drivers' ] );
+  this.start = function ( newData ) {
+    if ( typeof newData === 'object' ) {
+      data = newData
+    }
+  }
 
-    this.start = function ( newData ) {
-        if ( typeof newData === 'object' ) {
-            data = newData;
-        }
-    };
+  var respond = function ( cb, outcome ) {
+    if ( typeof cb === 'function' ) {
+      cb( outcome )
+    }
+  }
 
-    var respond = function ( cb, outcome ) {
-        if ( typeof cb === 'function' ) {
-            cb( outcome );
-        }
-    };
-
-    this.log = function ( info, cb ) {
-        var id = utils.uniqueId();
-        dbDriver.insert( config.table, id, utils.extend( {}, data, info ), function ( err ) {
-            if ( err ) {
-                utils.log( 'Log creation error: ', err );
-                respond( cb, false );
-                return;
-            }
-            respond( cb, id );
-        } );
-    };
-
-};
+  this.log = function ( info, cb ) {
+    var id = utils.uniqueId()
+    dbDriver.insert( config.table, id, utils.extend( {}, data, info ), function ( err ) {
+      if ( err ) {
+        utils.log( 'Log creation error: ', err )
+        respond( cb, false )
+        return
+      }
+      respond( cb, id )
+    } )
+  }
+}
