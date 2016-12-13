@@ -1,8 +1,5 @@
 'use strict'
 
-var path = require( 'path' )
-var fs = require( 'fs' )
-
 var appendTrailingSlash = function ( path ) {
   if ( path.substr( path.length - 1, 1 ) !== '/' ) {
     return path + '/'
@@ -12,7 +9,7 @@ var appendTrailingSlash = function ( path ) {
 
 var exists = function ( filename ) {
   try {
-    fs.accessSync( path.resolve( filename ), fs.constants.R_OK )
+    require.resolve( filename )
     return true
   } catch ( e ) {
     return false
