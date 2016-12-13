@@ -28,8 +28,8 @@ var load = function ( filename ) {
 }
 
 module.exports = function ( filename, paths ) {
+  var possibleFile
   if ( Array.isArray( paths ) ) {
-    var possibleFile
     for ( var i = 0; i < paths.length; i++ ) {
       possibleFile = appendTrailingSlash( paths[ i ] ) + filename
       if ( exists( possibleFile ) ) {
@@ -38,11 +38,12 @@ module.exports = function ( filename, paths ) {
         continue
       }
     }
-  }
-
-  if ( exists( filename ) ) {
-    return load( filename )
   } else {
-    return null
+    possibleFile = appendTrailingSlash( paths ) + filename
+    if ( exists( possibleFile ) ) {
+      return load( possibleFile )
+    } else {
+      return null
+    }
   }
 }
