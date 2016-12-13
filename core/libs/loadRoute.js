@@ -22,7 +22,7 @@ var schema = {
 }
 
 module.exports = function ( routesPath, pathname, request ) {
-  var RouteClass = utils.getFile( pathname, [ routesPath, __dirname + '/../../routes' ] )
+  var RouteClass = utils.getFile( pathname, routesPath )
 
   if ( !RouteClass ) {
     return RouteClass
