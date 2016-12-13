@@ -16,8 +16,10 @@ module.exports = function ( config ) {
         var route = loadRoute( config.get( 'paths' ).routes, req.pathname, req )
 
         var error = false
-        if ( !route ) {
+        if ( !route && route === null ) {
           error = new ErrorClass( 404, config.get( 'errors' )[ '404' ] )
+        } else if ( !route && route === false ) {
+          error = new ErrorClass( 500, config.get( 'errors' )[ '500' ] )
         } else {
           if ( !route.methodAllowed( req.method ) ) {
             error = new ErrorClass( 405, config.get( 'errors' )[ '405' ] )

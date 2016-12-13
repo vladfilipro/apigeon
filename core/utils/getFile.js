@@ -20,6 +20,6 @@ module.exports = function ( filename, paths ) {
   try {
     return require( filename )
   } catch ( e ) {
-    return false
+    return null
   }
 }

@@ -25,7 +25,7 @@ module.exports = function ( routesPath, pathname, request ) {
   var RouteClass = utils.getFile( pathname, [ routesPath, __dirname + '/../../routes' ] )
 
   if ( !RouteClass ) {
-    return false
+    return RouteClass
   }
 
   Object.keys( schema ).forEach( function ( prop ) {
