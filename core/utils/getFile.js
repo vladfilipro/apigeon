@@ -1,8 +1,10 @@
 'use strict'
 
 var appendTrailingSlash = function ( path ) {
-  if ( path.substr( path.length - 1, 1 ) !== '/' ) {
-    return path + '/'
+  if ( path ) {
+    if ( path.substr( path.length - 1, 1 ) !== '/' ) {
+      return path + '/'
+    }
   }
   return path
 }
