@@ -1,40 +1,41 @@
 'use strict'
 
-var Config = require( __dirname + '/../libs/configClass' )
-var extendReq = require( __dirname + '/../libs/extendReq' )
-var ErrorClass = require( __dirname + '/../libs/errorClass' )
-var loadRoute = require( __dirname + '/../libs/loadRoute' )
+const utils = require( __dirname + '/../utils' )
 
-module.exports = function ( config ) {
-  config = new Config( config )
+const RouteClass = require( __dirname + '/../libs/RouteClass' )
 
-  return function ( server, middlewares ) {
-    server.on( 'request', function ( req, res ) {
-      extendReq( req, config.get() )
+module.exports = ( config, error ) => {
+  // Return a mode function
+  return ( server, middlewares ) => {
+    // Process request
+    server.on( 'request', ( req, res ) => {
+      // Execute external middlewares first
+      middlewares( req, res, () => {
+        // Load requested route
+        let Route = utils.load( req.apigeon.pathname, config.get( 'routesPath' ) )
+        let instance = null
 
-      middlewares( req, res, function () {
-        var route = loadRoute( config.get( 'paths' ).routes, req.pathname, req )
-
-        var error = false
-        if ( !route ) {
-          error = new ErrorClass( 404, config.get( 'errors' )[ '404' ] )
+        let failed = false
+        if ( Route && ( Route.prototype instanceof RouteClass ) ) {
+          instance = new Route( config, req )
+          if ( !instance.methodAllowed( req.method.toLowerCase() ) ) {
+            failed = error( 405 )
+          }
+          if ( !instance.protocolAllowed( req.protocol.toLowerCase() ) ) {
+            failed = error( 403 )
+          }
         } else {
-          if ( !route.methodAllowed( req.method ) ) {
-            error = new ErrorClass( 405, config.get( 'errors' )[ '405' ] )
-          }
-          if ( !route.protocolAllowed( req.protocol ) ) {
-            error = new ErrorClass( 403, config.get( 'errors' )[ '403' ] )
-          }
+          failed = error( 404 )
         }
-        if ( error ) {
-          res.statusCode = error.getCode()
-          res.end( error.getMessage() )
+        if ( failed ) {
+          res.statusCode = failed.getCode()
+          res.end( failed.getMessage() )
           return
         }
 
-        var proccessRequest = function ( data, code, headers ) {
+        var proccessRequest = ( data, code, headers ) => {
           res.statusCode = code
-          if ( headers && typeof headers === 'object' ) {
+          if ( utils.isObject( headers ) ) {
             var headerNames = Object.keys( headers )
             for ( var i = 0, l = headerNames.length; i < l; i++ ) {
               res.setHeader( headerNames[ i ], headers[ headerNames[ i ] ] )
@@ -43,12 +44,12 @@ module.exports = function ( config ) {
           res.end( data )
         }
 
-        route._getData( function ( data, code, headers ) {
+        instance.execute( ( data, code, headers ) => {
           proccessRequest( data, code, headers )
-          route.terminate()
-        }, function ( error ) {
+          instance.terminate()
+        }, ( error ) => {
           proccessRequest( error.getMessage(), error.getCode() )
-          route.terminate()
+          instance.terminate()
         } )
       } )
     } )

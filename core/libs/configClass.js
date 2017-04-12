@@ -1,29 +1,36 @@
 'use strict'
 
-var utils = require( __dirname + '/../utils' )
+const utils = require( __dirname + '/../utils' )
 
-function Config ( config ) {
-  config = ( config instanceof Config ) ? config.get() : config
+class ConfigClass {
 
-  var defaults = {
-    paths: {
-      routes: null,
-      drivers: null
-    },
-    errors: {},
-    rewrite: function ( url ) {
-      return url
-    },
-    httpsOptions: null
+  constructor ( config ) {
+    this.data = utils.extend( {
+      routesPath: null,
+      mode: {
+        rest: true,
+        ws: true
+      },
+      httpErrors: {
+        '403': 'Access denied.',
+        '404': 'Page not found.',
+        '405': 'Method not allowed.',
+        '500': 'There was an error.',
+        '501': 'Not Implemented.'
+      },
+      rewrite: ( url ) => {
+        return url
+      },
+      httpsOptions: null
+    }, ( config instanceof ConfigClass ) ? config.get() : config )
   }
-  var configuration = utils.extend( {}, defaults, config )
 
-  this.get = function ( prop ) {
+  get ( prop ) {
     if ( prop ) {
-      return configuration[ prop ]
+      return this.data[ prop ]
     }
-    return configuration
+    return this.data
   }
 }
 
-module.exports = Config
+module.exports = ConfigClass

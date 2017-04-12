@@ -1,57 +1,60 @@
 'use strict'
 
-var Config = require( __dirname + '/../libs/configClass' )
-var extendReq = require( __dirname + '/../libs/extendReq' )
-var WebSocketServer = require( 'ws' ).Server
-var ErrorClass = require( __dirname + '/../libs/errorClass' )
-var loadRoute = require( __dirname + '/../libs/loadRoute' )
+const WebSocketServer = require( 'ws' ).Server
 
-module.exports = function ( config ) {
-  config = new Config( config )
+const utils = require( __dirname + '/../utils' )
 
-  return function ( server, middlewares ) {
-    server.on( 'request', function ( req, res ) {
-      extendReq( req, config.get() )
+const RouteClass = require( __dirname + '/../libs/RouteClass' )
+
+module.exports = ( config, error ) => {
+  // Return a mode function
+  return ( server, middlewares ) => {
+    // Process request
+    server.on( 'request', ( req, res ) => {
+      // Execute external middlewares
       middlewares( req, res )
     } )
 
-    var ws = new WebSocketServer( {
+    let ws = new WebSocketServer( {
       server: server
     } )
 
-    ws.on( 'connection', function ( socket ) {
-      var req = socket.upgradeReq
+    ws.on( 'connection', ( socket ) => {
+      let req = socket.upgradeReq
 
-      var route = loadRoute( config.get( 'paths' ).routes, req.pathname, req )
+      // Load requested route
+      let Route = utils.load( req.apigeon.pathname, config.get( 'routesPath' ) )
+      let instance = null
 
-      var error = false
-      if ( !route ) {
-        error = new ErrorClass( 404, config.get( 'errors' )[ '404' ] )
+      let failed = false
+      if ( Route && ( Route.prototype instanceof RouteClass ) ) {
+        instance = new Route( config, req )
+        if ( !instance.methodAllowed( 'socket' ) ) {
+          failed = error( 405 )
+        }
+        if ( !instance.protocolAllowed( req.protocol.toLowerCase() ) ) {
+          failed = error( 403 )
+        }
       } else {
-        if ( !route.methodAllowed( 'SOCKET' ) ) {
-          error = new ErrorClass( 405, config.get( 'errors' )[ '405' ] )
-        }
-        if ( !route.protocolAllowed( req.protocol ) ) {
-          error = new ErrorClass( 403, config.get( 'errors' )[ '403' ] )
-        }
+        failed = error( 404 )
       }
-      if ( error ) {
+      if ( failed ) {
         socket.send( error.getMessage() )
         socket.close()
         return
       }
 
-      socket.on( 'message', function ( message ) {
+      socket.on( 'message', ( message ) => {
         req.body = message
-        route._getData( function ( data ) {
+        instance.execute( ( data ) => {
           socket.send( data )
-        }, function ( error ) {
+        }, ( error ) => {
           socket.send( error.getMessage() )
         } )
       } )
 
-      socket.on( 'close', function () {
-        route.terminate()
+      socket.on( 'close', () => {
+        instance.terminate()
       } )
     } )
   }
