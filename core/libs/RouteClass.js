@@ -1,18 +1,13 @@
 'use strict'
 
-const utils = require( __dirname + '/../utils' )
-
 const ErrorClass = require( __dirname + '/ErrorClass' )
 
 class RouteClass {
 
-  constructor ( config, request ) {
+  constructor ( config, request, connection ) {
     this.config = config
     this.request = request
-    this.createError = ( code, message ) => {
-      message = message || ( utils.isObject( this.config.get( 'httpErrors' ) ) ? this.config.get( 'httpErrors' )[ code ] : null )
-      return new ErrorClass( code, message )
-    }
+    this.connection = connection
   }
 
   hasAccess () {
@@ -28,7 +23,7 @@ class RouteClass {
   }
 
   execute ( callback, errorCallback ) {
-    errorCallback( this.createError( 501 ) )
+    errorCallback( new ErrorClass( 501 ) )
   }
 
   terminate () {

@@ -4,7 +4,7 @@ An npm plugin to generate an server application. It can be used with either stan
 
 # TODO:
 
-- Cache responses ?
-- Log to output / db all server logic
-- Use environment
 - Add Session
+- Cookie management in route class
+- Query and Body params management in route class
+- Handle middlewares in route classes

@@ -1,23 +1,20 @@
 'use strict'
 
+const url = require( 'url' )
+
 const utils = require( __dirname + '/../utils' )
 
 class ConfigClass {
 
   constructor ( config ) {
     this.data = utils.extend( {
-      routesPath: null,
+      httpRoutesPath: '',
+      socketRoutesPath: '',
       mode: {
-        rest: true,
-        ws: true
+        http: true,
+        socket: true
       },
-      httpErrors: {
-        '403': 'Access denied.',
-        '404': 'Page not found.',
-        '405': 'Method not allowed.',
-        '500': 'There was an error.',
-        '501': 'Not Implemented.'
-      },
+      server: null,
       rewrite: ( url ) => {
         return url
       },
@@ -30,6 +27,22 @@ class ConfigClass {
       return this.data[ prop ]
     }
     return this.data
+  }
+
+  extendRequest ( req ) {
+    // extend the req object
+    let newUrl = this.data[ 'rewrite' ]( req.url )
+    let location = url.parse( newUrl, true )
+    req.apigeon = {
+      connection: req.socket.id,
+      url: newUrl,
+      pathname: location.pathname,
+      method: req.method,
+      protocol: req.protocol || ( req.headers[ 'X-Forwarded-Proto' ] ? req.headers[ 'X-Forwarded-Proto' ] : ( ( req.socket.encrypted ) ? 'https' : 'http' ) ),
+      query: location.query || {},
+      body: req.body,
+      data: null
+    }
   }
 }
 
