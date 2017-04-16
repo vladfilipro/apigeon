@@ -10,6 +10,10 @@ class RouteClass {
     this.connection = connection
   }
 
+  setup ( done ) {
+    done()
+  }
+
   hasAccess () {
     return true
   }
@@ -22,7 +26,7 @@ class RouteClass {
     return true
   }
 
-  execute ( callback, errorCallback ) {
+  execute ( data, callback, errorCallback ) {
     errorCallback( new ErrorClass( 501 ) )
   }
 

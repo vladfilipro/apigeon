@@ -4,6 +4,8 @@ const url = require( 'url' )
 
 const utils = require( __dirname + '/../utils' )
 
+const CookieClass = require( __dirname + '/CookieClass' )
+
 class ConfigClass {
 
   constructor ( config ) {
@@ -39,9 +41,8 @@ class ConfigClass {
       pathname: location.pathname,
       method: req.method,
       protocol: req.protocol || ( req.headers[ 'X-Forwarded-Proto' ] ? req.headers[ 'X-Forwarded-Proto' ] : ( ( req.socket.encrypted ) ? 'https' : 'http' ) ),
-      query: location.query || {},
-      body: req.body,
-      data: null
+      cookies: CookieClass.getCookiesFromHeader( req.headers.cookie ),
+      query: location.query || {}
     }
   }
 }

@@ -21,7 +21,7 @@ module.exports = ( config, server, connections ) => {
 
     req.apigeon.method = 'SOCKET'
 
-      // Load requested route
+    // Load requested route
     let Route = utils.load( req.apigeon.pathname, config.get( 'socketRoutesPath' ) )
     let instance = null
 
@@ -46,18 +46,21 @@ module.exports = ( config, server, connections ) => {
 
     utils.logger.log( '#' + connection.id + ' - SOCKET request success 200 - ' + req.apigeon.method + ' - ' + req.apigeon.protocol + ' - ' + req.apigeon.pathname )
 
-    socket.on( 'message', ( message ) => {
-      req.apigeon.body = message
-      instance.execute( ( data ) => {
-        socket.send( data )
-      }, ( error ) => {
-        socket.send( 'ERROR ' + error.getCode() + ' : ' + error.getMessage() )
-        connection.close()
+    instance.setup( () => {
+      socket.on( 'message', ( message ) => {
+        instance.execute(
+            message,
+             ( data ) => {
+               socket.send( data )
+             }, ( error ) => {
+               socket.send( 'ERROR ' + error.getCode() + ' : ' + error.getMessage() )
+               connection.close()
+             } )
       } )
-    } )
 
-    socket.on( 'close', () => {
-      instance.terminate()
+      socket.on( 'close', () => {
+        instance.terminate()
+      } )
     } )
   } )
 }

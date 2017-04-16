@@ -8,10 +8,6 @@ class SocketRouteClass extends RouteClass {
     return method === 'SOCKET'
   }
 
-  close () {
-    this.connection.close()
-  }
-
 }
 
 module.exports = SocketRouteClass

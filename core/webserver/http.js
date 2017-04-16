@@ -13,7 +13,7 @@ module.exports = ( config, server, connections ) => {
 
     let connection = connections.getConnectionFromRequest( req )
 
-      // Load requested route
+    // Load requested route
     let Route = utils.load( req.apigeon.pathname, config.get( 'httpRoutesPath' ) )
     let instance = null
     let failed = false
@@ -38,6 +38,21 @@ module.exports = ( config, server, connections ) => {
 
     utils.logger.log( '#' + connection.id + ' - HTTP request success 200 - ' + req.apigeon.method + ' - ' + req.apigeon.protocol + ' - ' + req.apigeon.pathname )
 
+    let executeMiddlewares = ( middlewares, request, response, cb ) => {
+      let executeMiddleware = ( i ) => {
+        if ( middlewares.length > i ) {
+          middlewares[ i ]( request, response, () => {
+            executeMiddleware( i + 1 )
+          } )
+        } else {
+          if ( typeof cb === 'function' ) {
+            cb()
+          }
+        }
+      }
+      executeMiddleware( 0 )
+    }
+
     var proccessRequest = ( data, code, headers ) => {
       res.statusCode = code
       if ( utils.isObject( headers ) ) {
@@ -50,12 +65,18 @@ module.exports = ( config, server, connections ) => {
       connection.close()
     }
 
-    instance.execute( ( data, code, headers ) => {
-      proccessRequest( data, code || 200, headers )
-      instance.terminate()
-    }, ( error ) => {
-      proccessRequest( error.getMessage(), error.getCode() )
-      instance.terminate()
+    instance.setup( () => {
+      executeMiddlewares( instance.middlewares, req, res, () => {
+        instance.execute(
+            req.body,
+            ( data, code, headers ) => {
+              proccessRequest( data, code || 200, headers )
+              instance.terminate()
+            }, ( error ) => {
+              proccessRequest( error.getMessage(), error.getCode() )
+              instance.terminate()
+            } )
+      } )
     } )
   } )
 }

@@ -5,6 +5,3 @@ An npm plugin to generate an server application. It can be used with either stan
 # TODO:
 
 - Add Session
-- Cookie management in route class
-- Query and Body params management in route class
-- Handle middlewares in route classes

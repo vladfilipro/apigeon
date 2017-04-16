@@ -26,7 +26,6 @@ module.exports = class Apigeon {
     this.config = new ConfigClass( options )
 
     this.__server = this.config.get( 'server' ) || null
-    this.__middlewares = []
     this.__connections = new ConnectionFactory()
 
     // Create server
@@ -42,27 +41,6 @@ module.exports = class Apigeon {
     this.__server.on( 'connection', ( socket ) => {
       this.__connections.createConnection( socket )
     } )
-
-    //
-    // let executeMiddlewares = ( req, res, cb ) => {
-
-    //   // run middlewares
-    //   let executeMiddleware = ( i ) => {
-    //     i = i || 0
-    //     if ( this.__middlewares.length > i ) {
-    //       if ( this.__middlewares[ i ].route.test( req.apigeon.url ) ) {
-    //         this.__middlewares[ i ].middleware( req, res, () => {
-    //           executeMiddleware( i + 1 )
-    //         } )
-    //       }
-    //     } else {
-    //       if ( typeof cb === 'function' ) {
-    //         cb()
-    //       }
-    //     }
-    //   }
-    //   executeMiddleware()
-    // }
 
     // Enable server mode
     let modes = this.config.get( 'mode' )
