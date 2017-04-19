@@ -7,6 +7,8 @@ const utils = require( __dirname + '/utils' )
 
 const ConfigClass = require( __dirname + '/libs/ConfigClass' )
 const ErrorClass = require( __dirname + '/libs/ErrorClass' )
+const CookieClass = require( __dirname + '/libs/CookieClass' )
+
 const ConnectionFactory = require( __dirname + '/libs/ConnectionFactory' )
 
 const HttpRouteClass = require( __dirname + '/libs/HttpRouteClass' )
@@ -18,7 +20,8 @@ module.exports = class Apigeon {
     return {
       HttpRouteClass: HttpRouteClass,
       SocketRouteClass: SocketRouteClass,
-      ErrorClass: ErrorClass
+      ErrorClass: ErrorClass,
+      CookieClass: CookieClass
     }
   }
 

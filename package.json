@@ -21,6 +21,9 @@
     "dependencies": {
         "ws": "2.2.3"
     },
+    "devDependencies": {
+        "body-parser": "1.17.1"
+    },
     "scripts": {
         "test": "node ./examples/server.js"
     }

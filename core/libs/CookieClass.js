@@ -24,7 +24,7 @@ class CookieClass {
   }
 
   // Outgoing cookies have more relevant data like : path , expires , secure and httponly
-  getHeaderString () {
+  toString () {
     let cookie = []
     cookie.push( this.key + '=' + encodeURI( this.value ) )
     cookie.push( 'path=' + this.path )
