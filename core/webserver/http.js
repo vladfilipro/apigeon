@@ -67,15 +67,13 @@ module.exports = ( config, server, connections ) => {
 
     instance.setup( () => {
       executeMiddlewares( instance.middlewares, req, res, () => {
-        instance.execute(
-            req.body,
-            ( data, code, headers ) => {
-              proccessRequest( data, code || 200, headers )
-              instance.terminate()
-            }, ( error ) => {
-              proccessRequest( error.getMessage(), error.getCode() )
-              instance.terminate()
-            } )
+        instance.execute( ( data, code, headers ) => {
+          proccessRequest( data, code || 200, headers )
+          instance.terminate()
+        }, ( error ) => {
+          proccessRequest( error.getMessage(), error.getCode() )
+          instance.terminate()
+        } )
       } )
     } )
   } )

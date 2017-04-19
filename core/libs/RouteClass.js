@@ -26,7 +26,7 @@ class RouteClass {
     return true
   }
 
-  execute ( data, callback, errorCallback ) {
+  execute ( callback, errorCallback ) {
     errorCallback( new ErrorClass( 501 ) )
   }
 

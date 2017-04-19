@@ -11,7 +11,8 @@ module.exports = class Default extends Apigeon.classes.HttpRouteClass {
     done()
   }
 
-  execute ( data, cb ) {
+  execute ( cb ) {
     cb( 'cookies: ' + JSON.stringify( this.request.apigeon.cookies ) + ' ; params: ' + JSON.stringify( this.request.apigeon.query ) )
   }
+
 }

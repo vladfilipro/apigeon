@@ -13,11 +13,11 @@ class CookieClass {
 
   // Incoming cookies only have key / value pair
   static getCookiesFromHeader ( header ) {
-    let cookies = []
+    let cookies = {}
     if ( header ) {
       header.split( ';' ).forEach( ( cookie ) => {
         var parts = cookie.split( '=' )
-        cookies.push( new CookieClass( parts.shift().trim(), decodeURI( parts.join( '=' ) ) ) )
+        cookies[ parts[ 0 ] ] = new CookieClass( parts[ 0 ], decodeURI( parts[ 1 ] ) )
       } )
     }
     return cookies
