@@ -1,7 +1,5 @@
 'use strict'
 
-const ErrorClass = require( __dirname + '/ErrorClass' )
-
 class RouteClass {
 
   constructor ( config, request, connection ) {
@@ -26,13 +24,7 @@ class RouteClass {
     return true
   }
 
-  execute ( callback, errorCallback ) {
-    errorCallback( new ErrorClass( 501 ) )
-  }
-
-  terminate () {
-    return true
-  }
+  terminate () {}
 
 }
 

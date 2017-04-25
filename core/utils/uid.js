@@ -1,5 +1,5 @@
 'use strict'
 
 module.exports = () => {
-  return ( new Date() ).getTime() + '' + Math.floor( Math.random() * 10000000 )
+  return Date.now() + '' + Math.floor( Math.random() * 10000000 )
 }

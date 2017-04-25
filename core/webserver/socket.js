@@ -28,6 +28,9 @@ module.exports = ( config, server, connections ) => {
     let failed = false
     if ( Route && ( Route.prototype instanceof SocketRouteClass ) ) {
       instance = new Route( config, req, connection )
+      if ( !instance.hasAccess() ) {
+        failed = new ErrorClass( 403 )
+      }
       if ( !instance.methodAllowed( req.apigeon.method.toUpperCase() ) ) {
         failed = new ErrorClass( 405 )
       }
