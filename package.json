@@ -1,9 +1,13 @@
 {
     "name": "apigeon",
-    "version": "3.0.2",
+    "version": "3.0.3",
     "description": "An npm plugin for creating API applications",
     "author": "Vlad Filip ( vlad.filip.dev@gmail.com )",
     "license": "SEE LICENSE IN LICENSE.md",
+    "engines": {
+        "node": ">=5.0.0",
+        "npm": ">=3.0.0"
+    },
     "keywords": [
         "node",
         "webserver",
