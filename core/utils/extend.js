@@ -1,32 +1,16 @@
 'use strict'
 
-var extend = function ( a, b ) {
-  if ( b && typeof b === 'object' ) {
-    Object.keys( b ).forEach( function ( prop ) {
-      a = a || {}
-      if ( typeof a[ prop ] === 'object' ) {
-        a[ prop ] = extend( a[ prop ], b[ prop ] )
-      } else {
-        a[ prop ] = b[ prop ]
-      }
+let isObject = ( o ) => !Array.isArray( o ) && o !== null && typeof o === 'object'
+
+let extend = ( o1, o2 ) => {
+  if ( isObject( o1 ) && isObject( o2 ) ) {
+    Object.keys( Object.assign( {}, o1, o2 ) ).forEach( ( key ) => {
+      o1[key] = extend( o1[key], o2[key] )
     } )
-  } else {
-    a = b
+  } else if ( o2 !== undefined ) {
+    return o2
   }
-  return a
+  return o1
 }
 
-module.exports = function () {
-  var target = arguments[ 0 ]
-  var extensions = []
-  for ( var i = 1, params = Object.keys( arguments ), l = params.length; i < l; i++ ) {
-    if ( arguments[ params[ i ] ] ) {
-      extensions.push( arguments[ params[ i ] ] )
-    }
-  }
-  for ( var j = 0; j < extensions.length; j++ ) {
-    target = extend( target, extensions[ j ] )
-  }
-
-  return target
-}
+module.exports = extend

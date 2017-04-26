@@ -1,64 +1,50 @@
 # Apigeon
 
-An npm plugin to generate an server application. It can be used with either standard http requests or websockets.
+An npm plugin to generate a server application. It can be used with either standard http requests or websockets.
 
-## Basic usage
-
-First step is always to install apigeon:
-
+## Installation
 ```
-    npm install apigeon
+npm install apigeon
 ```
 
-A basic example involves creating a simple route, and starting the server
-
-### Simple route example
-
-Create a folder `routes` and inside file called `index.js`. Add this code to the `index.js` file.
+## Usage
+A basic example of how to use Apigeon. The `httpRoutesPath` and `socketRoutesPath` should point to the folder containing the route classes.
 
 ```
-module.exports = function () {
+'use strict'
 
-    this.execute = function ( req, cb ) {
-        cb( 'Hello World!' );
-    };
+const PORT = 8080
 
-};
+const Apigeon = require( 'apigeon' )
+
+let config = {
+  httpRoutesPath: __dirname + '/routes/http',
+  socketRoutesPath: __dirname + '/routes/socket'
+}
+
+let server = new Apigeon( config )
+
+server.start( PORT )
 ```
 
-NOTE: The structure of the `routes` folder determines the url required to access it.
+## API
+
+Class | Api documentation
+--- | ---
+Apigeon | [https://github.com/vladfilipro/apigeon/blob/master/docs/apigeon.md](https://github.com/vladfilipro/apigeon/blob/master/docs/apigeon.md)
+ConnectionClass | [https://github.com/vladfilipro/apigeon/blob/master/docs/connection.md](https://github.com/vladfilipro/apigeon/blob/master/docs/connection.md)
+ErrorClass | [https://github.com/vladfilipro/apigeon/blob/master/docs/error.md](https://github.com/vladfilipro/apigeon/blob/master/docs/error.md)
+CookieClass | [https://github.com/vladfilipro/apigeon/blob/master/docs/cookie.md](https://github.com/vladfilipro/apigeon/blob/master/docs/cookie.md)
+RouteClass | [https://github.com/vladfilipro/apigeon/blob/master/docs/route.md](https://github.com/vladfilipro/apigeon/blob/master/docs/route.md)
+HttpRouteClass | [https://github.com/vladfilipro/apigeon/blob/master/docs/httproute.md](https://github.com/vladfilipro/apigeon/blob/master/docs/httproute.md)
+SocketRouteClass | [https://github.com/vladfilipro/apigeon/blob/master/docs/socketroute.md](https://github.com/vladfilipro/apigeon/blob/master/docs/socketroute.md)
+
+## Examples
+
+In order to run the examples provided with the package, clone the repository found in [github](https://github.com/vladfilipro/apigeon.git), and then run the following commands:
 
 ```
-+routes                   | not accessible by url
-    /index.js             | http://example.com/
-    +users                | not accessible by url
-        /index.js         | http://example.com/users
-        /create.js        | http://example.com/users/create
+npm install
+
+npm test
 ```
-
-### Creating a REST server
-
-Once your routes are defined, in your route folder, create a file `server.js` with the following content
-
-```
-    'use strict';
-
-    var Apigeon = require( 'apigeon' );
-
-
-    // Define server
-    var apigeon = new Apigeon( {
-        paths: {
-            routes: './routes'
-        }
-    } );
-
-    apigeon.enableREST();
-
-    var port = 8000;
-    apigeon.start( port, function() {
-        console.log('Server listening on port ' + port);
-    });
-```
-
-To test your server run `node server.js`. At this point you can reach the routes you created by using the correct urls.

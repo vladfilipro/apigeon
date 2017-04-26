@@ -1,97 +1,80 @@
 'use strict'
 
-var Config = require( __dirname + '/libs/configClass' )
-var extendReq = require( __dirname + '/libs/extendReq' )
-var http = require( 'http' )
-var https = require( 'https' )
+const http = require( 'http' )
+const https = require( 'https' )
 
-function Apigeon ( options ) {
-  var config = new Config( options )
+const utils = require( __dirname + '/utils' )
 
-  var server = null
-  var middlewares = []
+const ConfigClass = require( __dirname + '/libs/ConfigClass' )
+const ErrorClass = require( __dirname + '/libs/ErrorClass' )
+const CookieClass = require( __dirname + '/libs/CookieClass' )
 
-  if ( !config.get( 'httpsOptions' ) ) {
-    server = http.createServer()
-  } else {
-    server = https.createServer( config.get( 'httpsOptions' ) )
+const ConnectionFactory = require( __dirname + '/libs/ConnectionFactory' )
+
+const HttpRouteClass = require( __dirname + '/libs/HttpRouteClass' )
+const SocketRouteClass = require( __dirname + '/libs/SocketRouteClass' )
+
+module.exports = class Apigeon {
+
+  static get classes () {
+    return {
+      HttpRouteClass: HttpRouteClass,
+      SocketRouteClass: SocketRouteClass,
+      ErrorClass: ErrorClass,
+      CookieClass: CookieClass
+    }
   }
 
-    // Register all connections
-  var connections = {}
-  server.on( 'connection', function ( socket ) {
-    var id = ( new Date() ).getTime() + '' + Math.floor( Math.random() * 10000000 ) // Unique Id
-    connections[ id ] = socket
-    socket.on( 'close', function () {
-      delete connections[ id ]
-    } )
-  } )
+  constructor ( options ) {
+    this.config = new ConfigClass( options )
 
-  var executeMiddlewares = function ( req, res, cb ) {
-        // extend request
-    extendReq( req, config.get() )
+    this.__server = this.config.get( 'server' ) || null
+    this.__connections = new ConnectionFactory()
 
-        // run middlewares
-    var executeMiddleware = function ( i ) {
-      i = i || 0
-      if ( middlewares.length > i ) {
-        middlewares[ i ]( req, res, function () {
-          executeMiddleware( i + 1 )
-        } )
+    // Create server
+    if ( !this.__server ) {
+      if ( !this.config.get( 'httpsOptions' ) ) {
+        this.__server = http.createServer()
       } else {
-        cb()
+        this.__server = https.createServer( this.config.get( 'httpsOptions' ) )
       }
     }
-    executeMiddleware()
-  }
 
-  this.start = function ( port, done ) {
-    return server.listen( port, done )
-  }
+    // Register all connections
+    this.__server.on( 'connection', ( socket ) => {
+      this.__connections.createConnection( socket )
+    } )
 
-  this.stop = function ( done ) {
-    if ( server.listening ) {
-      for ( var i = 0, keys = Object.keys( connections ), l = keys.length; i < l; i++ ) {
-        connections[ keys[ i ] ].destroy()
+    // Enable server mode
+    let modes = this.config.get( 'mode' )
+    Object.keys( modes ).forEach( ( key ) => {
+      if ( modes[ key ] ) {
+        require( __dirname + '/webserver/' + key )( this.config, this.__server, this.__connections )
       }
-      server.close( done )
+    } )
+  }
+
+  start ( port, done ) {
+    utils.logger.list( 'CONFIGURATION', [
+      'HTTP ROUTES PATH : ' + this.config.get( 'httpRoutesPath' ),
+      'SOCKET ROUTES PATH : ' + this.config.get( 'socketRoutesPath' ),
+      'MODE HTTP : ' + ( this.config.get( 'mode' ).http ),
+      'MODE WEBSOCKET : ' + ( this.config.get( 'mode' ).socket ),
+      'HTTPS : ' + ( !!this.config.get( 'httpsOptions' ) )
+    ] )
+
+    this.__server.listen( port, done )
+    utils.logger.info( 'Server started listening... ( PORT: ' + port + ' )' )
+  }
+
+  stop ( done ) {
+    if ( this.__server.listening ) {
+      this.__connections.close()
+      this.__server.close( done )
+      utils.logger.info( ' Server stopped. ' )
     } else {
       done()
     }
   }
 
-  this.getInstance = function () {
-    return server
-  }
-
-  this.getConfig = function () {
-    return config
-  }
-
-  this.enableREST = function () {
-    require( __dirname + '/webserver/rest' )( config )( server, executeMiddlewares )
-  }
-
-  this.enableWS = function () {
-    require( __dirname + '/webserver/ws' )( config )( server, executeMiddlewares )
-  }
-
-  this.attach = function ( middleware ) {
-    if ( typeof middleware === 'function' ) {
-      middlewares.push( middleware )
-    }
-  }
-
-  var predefinedMiddlewares = {
-    session: function ( sessionConfig ) {
-      return require( __dirname + '/webserver/middlewares/session' )( config, sessionConfig )
-    },
-    logs: function ( logsConfig ) {
-      return require( __dirname + '/webserver/middlewares/logs' )( config, logsConfig )
-    }
-  }
-
-  this.middlewares = predefinedMiddlewares
 }
-
-module.exports = Apigeon

@@ -1,29 +1,49 @@
 'use strict'
 
-var utils = require( __dirname + '/../utils' )
+const url = require( 'url' )
 
-function Config ( config ) {
-  config = ( config instanceof Config ) ? config.get() : config
+const utils = require( __dirname + '/../utils' )
 
-  var defaults = {
-    paths: {
-      routes: null,
-      drivers: null
-    },
-    errors: {},
-    rewrite: function ( url ) {
-      return url
-    },
-    httpsOptions: null
+const CookieClass = require( __dirname + '/CookieClass' )
+
+class ConfigClass {
+
+  constructor ( config ) {
+    this.data = utils.extend( {
+      httpRoutesPath: '',
+      socketRoutesPath: '',
+      mode: {
+        http: true,
+        socket: true
+      },
+      server: null,
+      rewrite: ( url ) => {
+        return url
+      },
+      httpsOptions: null
+    }, ( config instanceof ConfigClass ) ? config.get() : config )
   }
-  var configuration = utils.extend( {}, defaults, config )
 
-  this.get = function ( prop ) {
+  get ( prop ) {
     if ( prop ) {
-      return configuration[ prop ]
+      return this.data[ prop ]
     }
-    return configuration
+    return this.data
+  }
+
+  extendRequest ( req ) {
+    // extend the req object
+    let newUrl = this.data[ 'rewrite' ]( req.url )
+    let location = url.parse( newUrl, true )
+    req.apigeon = {
+      url: newUrl,
+      pathname: location.pathname,
+      method: req.method,
+      protocol: req.protocol || ( req.headers[ 'X-Forwarded-Proto' ] ? req.headers[ 'X-Forwarded-Proto' ] : ( ( req.socket.encrypted ) ? 'https' : 'http' ) ),
+      cookies: CookieClass.getCookiesFromHeader( req.headers.cookie ),
+      query: location.query || {}
+    }
   }
 }
 
-module.exports = Config
+module.exports = ConfigClass

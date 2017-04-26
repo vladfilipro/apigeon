@@ -1,18 +1,18 @@
 'use strict'
 
-var getEnv = function () {
-  var env = ( process.env.NODE_ENV && process.env.NODE_ENV !== 'undefined' ) ? process.env.NODE_ENV : 'development'
+let getEnv = () => {
+  let env = ( process.env.NODE_ENV && process.env.NODE_ENV !== 'undefined' ) ? process.env.NODE_ENV : 'development'
   return env.toLowerCase()
 }
 
 module.exports = {
-  isDevelopment: function () {
+  isDevelopment: () => {
     return !( getEnv() === 'production' || getEnv() === 'prod' )
   },
-  isProduction: function () {
+  isProduction: () => {
     return ( getEnv() === 'production' || getEnv() === 'prod' )
   },
-  get: function () {
+  get: () => {
     return getEnv()
   }
 }

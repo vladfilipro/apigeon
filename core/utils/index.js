@@ -1,11 +1,10 @@
 'use strict'
 
 module.exports = {
-  uniqueId: require( __dirname + '/uniqueid' ),
-  env: require( __dirname + '/env' ),
+  environment: require( __dirname + '/environment' ),
   extend: require( __dirname + '/extend' ),
-  date: require( __dirname + '/date' ),
-  q: require( __dirname + '/promise' ),
-  log: require( __dirname + '/log' ),
-  getFile: require( __dirname + '/getFile' )
+  isObject: ( o ) => !Array.isArray( o ) && o !== null && typeof o === 'object',
+  load: require( __dirname + '/load' ),
+  logger: require( __dirname + '/logger' ),
+  uid: require( __dirname + '/uid' )
 }
