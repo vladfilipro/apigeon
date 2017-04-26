@@ -1,6 +1,6 @@
 'use strict'
 
-let isObject = ( o ) => !Array.isArray( o ) && o !== null && typeof o === 'object'
+const isObject = require( __dirname + '/isobject' )
 
 let extend = ( o1, o2 ) => {
   if ( isObject( o1 ) && isObject( o2 ) ) {
