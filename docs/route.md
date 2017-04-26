@@ -32,7 +32,7 @@ Method | Description
 --- | ---
 hasAccess() |  Should return a boolean value
 
-This method is called when the route has been determined.
+This method is called right before the execution of the route.
 If the method returns FALSE the server will return a `403` status code.
 If the method returns TRUE the server will continue execution
 
@@ -42,7 +42,7 @@ Method | Description
 --- | ---
 methodAllowed( method ) |  Should return a boolean value
 
-This method is called when the route has been determined and after the `hasAccess()` method.
+This method is called when the route has been determined.
 If the method returns FALSE the server will return a `405` status code.
 If the method returns TRUE the server will continue execution
 

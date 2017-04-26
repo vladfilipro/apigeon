@@ -36,7 +36,6 @@ class ConfigClass {
     let newUrl = this.data[ 'rewrite' ]( req.url )
     let location = url.parse( newUrl, true )
     req.apigeon = {
-      connection: req.socket.id,
       url: newUrl,
       pathname: location.pathname,
       method: req.method,

@@ -19,9 +19,6 @@ module.exports = ( config, server, connections ) => {
     let failed = false
     if ( Route && ( Route.prototype instanceof HttpRouteClass ) ) {
       instance = new Route( config, req, connection )
-      if ( !instance.hasAccess() ) {
-        failed = new ErrorClass( 403 )
-      }
       if ( !instance.methodAllowed( req.apigeon.method.toUpperCase() ) ) {
         failed = new ErrorClass( 405 )
       }
@@ -70,6 +67,13 @@ module.exports = ( config, server, connections ) => {
 
     instance.setup( () => {
       executeMiddlewares( instance.middlewares, req, res, () => {
+        if ( !instance.hasAccess() ) {
+          let err = new ErrorClass( 403 )
+          res.statusCode = err.getCode()
+          res.end( err.getMessage() )
+          connection.close()
+          return
+        }
         instance.execute( ( data, code, headers ) => {
           proccessRequest( data, code || 200, headers )
           instance.terminate()

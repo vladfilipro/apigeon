@@ -32,8 +32,10 @@ server.start( PORT )
 Class | Api documentation
 --- | ---
 Apigeon | [https://github.com/vladfilipro/apigeon/blob/master/docs/apigeon.md](https://github.com/vladfilipro/apigeon/blob/master/docs/apigeon.md)
+ConnectionClass | [https://github.com/vladfilipro/apigeon/blob/master/docs/connection.md](https://github.com/vladfilipro/apigeon/blob/master/docs/connection.md)
 ErrorClass | [https://github.com/vladfilipro/apigeon/blob/master/docs/error.md](https://github.com/vladfilipro/apigeon/blob/master/docs/error.md)
 CookieClass | [https://github.com/vladfilipro/apigeon/blob/master/docs/cookie.md](https://github.com/vladfilipro/apigeon/blob/master/docs/cookie.md)
+RouteClass | [https://github.com/vladfilipro/apigeon/blob/master/docs/route.md](https://github.com/vladfilipro/apigeon/blob/master/docs/route.md)
 HttpRouteClass | [https://github.com/vladfilipro/apigeon/blob/master/docs/httproute.md](https://github.com/vladfilipro/apigeon/blob/master/docs/httproute.md)
 SocketRouteClass | [https://github.com/vladfilipro/apigeon/blob/master/docs/socketroute.md](https://github.com/vladfilipro/apigeon/blob/master/docs/socketroute.md)
 

@@ -39,7 +39,7 @@ class ConnectionFactory {
 
   getConnectionFromRequest ( req ) {
     if ( utils.isObject( req ) && utils.isObject( req.socket ) && utils.isObject( req.socket.apigeon ) ) {
-      return this.getConnectionFromId( req.socket.apigeon.socketId )
+      return this.getConnectionFromId( req.socket.apigeon.connectionId )
     }
     return null
   }
