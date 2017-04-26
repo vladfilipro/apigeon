@@ -35,3 +35,5 @@ module.exports = class Default extends Apigeon.classes.SocketRouteClass {
   }
 
 }
+
+```

@@ -29,11 +29,12 @@ This method is called once all the checks for the route have passed.
 The following example describes an HttpRoute which returns a 500 error
 
 ```
+
 'use strict'
 
 const Apigeon = require( 'apigeon' )
 
-module.exports = class Default extends Apigeon.classes.SocketRouteClass {
+module.exports = class Default extends Apigeon.classes.HttpRouteClass {
 
   setup( done ) {
       // Adding a middleware
@@ -54,3 +55,5 @@ module.exports = class Default extends Apigeon.classes.SocketRouteClass {
   }
 
 }
+
+```

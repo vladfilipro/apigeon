@@ -48,3 +48,66 @@ npm install
 
 npm test
 ```
+
+---
+
+#### A complete example:
+
+- Create a folder: /home/user/apigeon
+
+- Inside the folder run:
+
+```
+npm install apigeon
+```
+
+- HttpRoute file: /home/user/apigeon/routes/index.js
+
+```
+'use strict'
+
+const Apigeon = require( 'apigeon' )
+
+module.exports = class Default extends Apigeon.classes.HttpRouteClass {
+
+  execute ( cb, ecb ) {
+    if ( this.request.apigeon.query.message === 'hello') {
+        cb( 'Hello!', 200, {} )
+    } else if ( this.request.apigeon.query.message === 'redirect' ) {
+        cb( 'You will be redirected...', 302, { 'Location': 'http://vladfilip.ro' } )
+    } else {
+        ecb( new Apigeon.classes.ErrorClass( 403 ) )
+    }
+  }
+
+}
+```
+
+- Main file: /home/user/apigeon/server.js
+
+```
+
+'use strict'
+
+const PORT = 8080
+
+const Apigeon = require( 'apigeon' )
+
+let config = {
+  httpRoutesPath: __dirname + '/routes'
+  mode: {
+      socket: false
+  }
+}
+
+let server = new Apigeon( config )
+
+server.start( PORT )
+
+```
+
+- To test the example:
+
+```
+node server.js
+```

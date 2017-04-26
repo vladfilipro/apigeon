@@ -2,6 +2,18 @@
 
 This `abstract` class, is the base for both HttpRoutes and SocketRoutes.
 
+The structure of the routes folder determines the url required to access it.
+
+```
++routes                   | not accessible by url
+    /index.js             | http://example.com/
+    +users                | not accessible by url
+        /index.js         | http://example.com/users
+        /create.js        | http://example.com/users/create
+```
+
+---
+
 Property | Description
 --- | ---
 this.config | The config object passed to [Apigeon](https://github.com/vladfilipro/apigeon/blob/master/docs/apigeon.md) constructor
