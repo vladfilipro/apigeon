@@ -8,7 +8,6 @@ Every request that goes through Apigeon is altered by adding an additional prope
     pathname: location.pathname, // Parsed pathname of from the processed url
     method: req.method, // The http method or 'SOCKET' if accessing a SocketRoute
     protocol: req.protocol || ( req.headers[ 'X-Forwarded-Proto' ] ? req.headers[ 'X-Forwarded-Proto' ] : ( ( req.socket.encrypted ) ? 'https' : 'http' ) ),
-    cookies: CookieClass.getCookiesFromHeader( req.headers.cookie ), // Array of CookieClasses
     query: location.query || {} // Object containing the query string parameters
 }
 ```
@@ -81,7 +80,6 @@ The classes method returns an object containing public classes that are needed i
  - HttpRouteClass
  - SocketRouteClass
  - ErrorClass
- - CookieClass
 
 ---
 
