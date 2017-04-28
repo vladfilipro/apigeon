@@ -29,14 +29,14 @@ module.exports = ( config, server, connections ) => {
       failed = new ErrorClass( 404 )
     }
     if ( failed ) {
-      utils.logger.log( '#' + connection.id + ' - HTTP request fail ' + failed.getCode() + ' - ' + req.apigeon.method + ' - ' + req.apigeon.protocol + ' - ' + req.apigeon.pathname )
+      utils.logger.log( '#' + connection.id + ' - HTTP request fail ' + failed.getCode() + ' - ' + req.apigeon.method + ' - ' + req.apigeon.protocol + ' - ' + req.url )
       res.statusCode = failed.getCode()
       res.end( failed.getMessage() )
       connection.close()
       return
     }
 
-    utils.logger.log( '#' + connection.id + ' - HTTP request success 200 - ' + req.apigeon.method + ' - ' + req.apigeon.protocol + ' - ' + req.apigeon.pathname )
+    utils.logger.log( '#' + connection.id + ' - HTTP request success 200 - ' + req.apigeon.method + ' - ' + req.apigeon.protocol + ' - ' + req.url )
 
     let executeMiddlewares = ( middlewares, request, response, cb ) => {
       let executeMiddleware = ( i ) => {
