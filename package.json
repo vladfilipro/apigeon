@@ -23,10 +23,10 @@
         "url": "https://github.com/vladfilipro/apigeon/issues"
     },
     "dependencies": {
-        "ws": "2.2.3"
+        "ws": "^2.3.1"
     },
     "devDependencies": {
-        "body-parser": "1.17.1"
+        "body-parser": "^1.17.1"
     },
     "scripts": {
         "test": "node ./examples/server.js"

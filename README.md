@@ -1,5 +1,10 @@
 # Apigeon
 
+[![Dependency Status][depstat-image]][depstat-url]
+
+[depstat-url]: https://david-dm.org/vladfilipro/apigeon
+[depstat-image]: https://david-dm.org/vladfilipro/apigeon.png
+
 An npm plugin to generate a server application. It can be used with either standard http requests or websockets.
 
 ## Installation
