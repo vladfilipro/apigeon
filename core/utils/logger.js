@@ -71,7 +71,7 @@ module.exports = {
 
   warn: function () {
     console.log( '\n\r' )
-    console.log.apply( this, [ timestamp(), color( 'hicolor' ) + color( 'bg_yellow' ) + '[ ERROR ]' + color( 'reset' ), color( 'yellow' ), ...arguments, color( 'reset' ) ] )
+    console.log.apply( this, [ timestamp(), color( 'hicolor' ) + color( 'bg_yellow' ) + '[ WARNING ]' + color( 'reset' ), color( 'yellow' ), ...arguments, color( 'reset' ) ] )
     console.log( '\n\r' )
   },
 
