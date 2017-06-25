@@ -6,6 +6,7 @@ class RouteClass {
     this.config = config
     this.request = request
     this.connection = connection
+    this.middlewares = []
   }
 
   setup ( done ) {

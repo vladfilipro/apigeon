@@ -45,15 +45,31 @@ module.exports = ( config, server, connections ) => {
 
     utils.logger.log( '#' + connection.id + ' - SOCKET request success 200 - ' + req.apigeon.method + ' - ' + req.apigeon.protocol + ' - ' + req.url )
 
-    instance.setup( () => {
-      if ( !instance.hasAccess() ) {
-        let err = new ErrorClass( 403 )
-        socket.send( err.getMessage() )
-        socket.close()
-        return
+    let executeMiddlewares = ( middlewares, socket, request, cb ) => {
+      let executeMiddleware = ( i ) => {
+        if ( middlewares.length > i ) {
+          middlewares[ i ]( socket, request, () => {
+            executeMiddleware( i + 1 )
+          } )
+        } else {
+          if ( typeof cb === 'function' ) {
+            cb()
+          }
+        }
       }
-      socket.on( 'message', ( message ) => {
-        instance.execute(
+      executeMiddleware( 0 )
+    }
+
+    instance.setup( () => {
+      executeMiddlewares( instance.middlewares, socket, req, () => {
+        if ( !instance.hasAccess() ) {
+          let err = new ErrorClass( 403 )
+          socket.send( err.getMessage() )
+          socket.close()
+          return
+        }
+        socket.on( 'message', ( message ) => {
+          instance.execute(
             message,
              ( data ) => {
                socket.send( data )
@@ -61,10 +77,10 @@ module.exports = ( config, server, connections ) => {
                socket.send( 'ERROR ' + error.getCode() + ' : ' + error.getMessage() )
                connection.close()
              } )
-      } )
-
-      socket.on( 'close', () => {
-        instance.terminate()
+        } )
+        socket.on( 'close', () => {
+          instance.terminate()
+        } )
       } )
     } )
   } )

@@ -3,10 +3,10 @@
 This class extends [RouteClass](https://github.com/vladfilipro/apigeon/blob/master/docs/route.md)
 A SocketRoute only accepts the method `GET`, `POST`, `PUT` or `DELETE` ( unless the `methodAllowed` is overwritten ).
 
+---
 
-Property | Description
---- | ---
-this.middlewares | An array of middlewares. These middlewares have to be set in the `setup( done )` method of the route and will be executed before the `hasAccess()` method. It's important to rember that the middlewares cannot send any data to the response object, because not all headers have been sent yet.
+Note that the HttpMiddleware has the following interface:
+`function( req, res, callback )`
 
 ---
 

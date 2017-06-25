@@ -3,6 +3,12 @@
 This class extends [RouteClass](https://github.com/vladfilipro/apigeon/blob/master/docs/route.md)
 A SocketRoute only accepts the method `SOCKET` ( unless the `methodAllowed` is overwritten ). The socket server will automatically set the method to `SOCKET` when sent to the route so you don't have to worry about that.
 
+---
+Note that the SocketMiddleware has the following interface:
+`function( socket, req, callback )`
+
+---
+
 Method | Description | Return
 --- | --- | ---
 execute( data, callback, errorCallback ) | The execution function for the route | -
@@ -25,6 +31,14 @@ The following example describes an SocketRoute which returns a 500 error
 const Apigeon = require( 'apigeon' )
 
 module.exports = class Default extends Apigeon.classes.SocketRouteClass {
+
+  setup( done ) {
+    // Adding a middleware
+    this.middlewares.push( ( socket, req, cb ) => {
+        // Do something
+        cb ( done )
+    } )
+  }
 
   execute ( data, cb, ecb ) {
     if ( data === 'Hello World!') {
