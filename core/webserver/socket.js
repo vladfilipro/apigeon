@@ -13,8 +13,7 @@ module.exports = ( config, server, connections ) => {
     server: server
   } )
 
-  ws.on( 'connection', ( socket ) => {
-    let req = socket.upgradeReq
+  ws.on( 'connection', ( socket, req ) => {
     config.extendRequest( req )
 
     let connection = connections.getConnectionFromRequest( req )

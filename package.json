@@ -1,6 +1,6 @@
 {
     "name": "apigeon",
-    "version": "3.1.3",
+    "version": "3.1.4",
     "description": "An npm plugin for creating API applications",
     "author": "Vlad Filip ( vlad.filip.dev@gmail.com )",
     "license": "SEE LICENSE IN LICENSE.md",
@@ -23,12 +23,12 @@
         "url": "https://github.com/vladfilipro/apigeon/issues"
     },
     "dependencies": {
-        "ws": "^2.3.1"
+        "ws": "^3.0.0"
     },
     "devDependencies": {
-        "body-parser": "^1.17.1"
+        "body-parser": "^1.17.2"
     },
     "scripts": {
-        "test": "node ./examples/server.js"
+        "test": "npm outdated && node ./examples/server.js"
     }
 }
