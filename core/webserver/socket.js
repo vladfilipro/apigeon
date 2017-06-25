@@ -39,7 +39,7 @@ module.exports = ( config, server, connections ) => {
     if ( failed ) {
       utils.logger.log( '#' + connection.id + ' - SOCKET request fail ' + failed.getCode() + ' - ' + req.apigeon.method + ' - ' + req.apigeon.protocol + ' - ' + req.url )
       socket.send( failed.getMessage() )
-      socket.close()
+      connection.close()
       return
     }
 
@@ -65,7 +65,7 @@ module.exports = ( config, server, connections ) => {
         if ( !instance.hasAccess() ) {
           let err = new ErrorClass( 403 )
           socket.send( err.getMessage() )
-          socket.close()
+          connection.close()
           return
         }
         socket.on( 'message', ( message ) => {
