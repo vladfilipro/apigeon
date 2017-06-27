@@ -14,7 +14,9 @@ class RouteClass {
   }
 
   hasAccess () {
-    return true
+    return new Promise( ( resolve, reject ) => {
+      resolve()
+    } )
   }
 
   methodAllowed ( method ) {

@@ -68,17 +68,19 @@ module.exports = ( config, server, connections ) => {
 
     instance.setup( () => {
       executeMiddlewares( instance.middlewares, req, res, () => {
-        if ( !instance.hasAccess() ) {
+        instance.hasAccess()
+        .then( () => {
+          instance.execute( ( data, code, headers ) => {
+            proccessRequest( data, code || 200, headers )
+          }, ( error ) => {
+            proccessRequest( error.getMessage(), error.getCode() )
+          } )
+        } )
+        .catch( () => {
           let err = new ErrorClass( 403 )
           res.statusCode = err.getCode()
           res.end( err.getMessage() )
           connection.close()
-          return
-        }
-        instance.execute( ( data, code, headers ) => {
-          proccessRequest( data, code || 200, headers )
-        }, ( error ) => {
-          proccessRequest( error.getMessage(), error.getCode() )
         } )
       } )
     } )

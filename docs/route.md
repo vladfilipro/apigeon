@@ -43,11 +43,11 @@ This method will be called before the execute method. Once the `setup` function 
 
 Method | Description
 --- | ---
-hasAccess() |  Should return a boolean value
+hasAccess() |  Should return a Promise
 
 This method is called right before the execution of the route.
-If the method returns FALSE the server will return a `403` status code.
-If the method returns TRUE the server will continue execution
+If the method returns rejected promise the server will return a `403` status code.
+If the method returns resolved promise the server will continue execution
 
 ---
 
