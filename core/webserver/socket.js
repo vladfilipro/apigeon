@@ -85,9 +85,9 @@ module.exports = ( config, server, connections ) => {
             connection.close()
           } )
         } )
-        .catch( () => {
+        .catch( ( capturedError ) => {
           let err = new ErrorClass( 403 )
-          socket.send( err.getMessage() )
+          socket.send( capturedError || err.getMessage() )
           connection.close()
         } )
       } )

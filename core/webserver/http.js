@@ -76,10 +76,10 @@ module.exports = ( config, server, connections ) => {
             proccessRequest( error.getMessage(), error.getCode() )
           } )
         } )
-        .catch( () => {
+        .catch( ( capturedError ) => {
           let err = new ErrorClass( 403 )
           res.statusCode = err.getCode()
-          res.end( err.getMessage() )
+          res.end( capturedError || err.getMessage() )
           connection.close()
         } )
       } )
