@@ -65,17 +65,24 @@ module.exports = ( config, server, connections ) => {
         instance.hasAccess()
         .then( () => {
           socket.on( 'message', ( message ) => {
-            instance.execute(
+            instance.onmessage(
               message,
-               ( data ) => {
-                 socket.send( data )
-               }, ( error ) => {
-                 socket.send( 'ERROR ' + error.getCode() + ' : ' + error.getMessage() )
-                 connection.close()
-               } )
+              ( data ) => {
+                socket.send( data )
+              }, ( error ) => {
+                socket.send( 'ERROR ' + error.getCode() + ' : ' + error.getMessage() )
+                connection.close()
+              } )
           } )
           socket.on( 'close', () => {
             instance.terminate()
+          } )
+          instance.execute(
+          ( data ) => {
+            socket.send( data )
+          }, ( error ) => {
+            socket.send( 'ERROR ' + error.getCode() + ' : ' + error.getMessage() )
+            connection.close()
           } )
         } )
         .catch( () => {

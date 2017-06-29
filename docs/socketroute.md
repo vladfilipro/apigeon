@@ -11,9 +11,20 @@ Note that the SocketMiddleware has the following interface:
 
 Method | Description | Return
 --- | --- | ---
-execute( data, callback, errorCallback ) | The execution function for the route | -
+execute( callback, errorCallback ) | The execution function for the route | -
 
 This method is called once all the checks for the route have passed.
+
+- The `callback` parameter is a function which accepts one parameter of type `String`, containing the response from the server
+- The `errorCallback` parameter is a function which accepts one parameter of type [ErrorClass](https://github.com/vladfilipro/apigeon/blob/master/docs/error.md). This will send the error provided to the client and terminate the connection.
+
+---
+
+Method | Description | Return
+--- | --- | ---
+onmessage( data, callback, errorCallback ) | The message function for the route | -
+
+This method is called each time a message is received.
 
 - The `data` parameter contains the data sent by the client
 - The `callback` parameter is a function which accepts one parameter of type `String`, containing the response from the server
@@ -40,12 +51,16 @@ module.exports = class Default extends Apigeon.classes.SocketRouteClass {
     } )
   }
 
-  execute ( data, cb, ecb ) {
+  onmessage ( data, cb, ecb ) {
     if ( data === 'Hello World!') {
         cb( 'Hello to you too!' )
     } else {
         ecb( new Apigeon.classes.ErrorClass( 403 ) )
     }
+  }
+
+  execute ( cb, ecb ) {
+      cb( 'Connected' )
   }
 
 }

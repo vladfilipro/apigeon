@@ -9,7 +9,11 @@ class SocketRouteClass extends RouteClass {
     return method === 'SOCKET'
   }
 
-  execute ( data, callback, errorCallback ) {
+  onmessage ( data, callback, errorCallback ) {
+    errorCallback( new ErrorClass( 501 ) )
+  }
+
+  execute ( callback, errorCallback ) {
     errorCallback( new ErrorClass( 501 ) )
   }
 
