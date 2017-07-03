@@ -61,7 +61,6 @@ module.exports = ( config, server, connections ) => {
           res.setHeader( headerNames[ i ], headers[ headerNames[ i ] ] )
         }
       }
-      instance.terminate()
       res.end( data )
       connection.close()
     }
@@ -69,6 +68,9 @@ module.exports = ( config, server, connections ) => {
     instance.setup( () => {
       executeMiddlewares( instance.middlewares, req, res, () => {
         instance.hasAccess( () => {
+          res.on( 'finish', () => {
+            instance.terminate()
+          } )
           instance.execute( ( data, code, headers ) => {
             proccessRequest( data, code || 200, headers )
           }, ( error ) => {
