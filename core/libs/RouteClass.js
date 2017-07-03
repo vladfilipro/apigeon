@@ -13,10 +13,8 @@ class RouteClass {
     done()
   }
 
-  hasAccess () {
-    return new Promise( ( resolve, reject ) => {
-      resolve()
-    } )
+  hasAccess ( resolve, reject ) {
+    resolve()
   }
 
   methodAllowed ( method ) {

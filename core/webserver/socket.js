@@ -62,17 +62,16 @@ module.exports = ( config, server, connections ) => {
 
     instance.setup( () => {
       executeMiddlewares( instance.middlewares, socket, req, () => {
-        instance.hasAccess()
-        .then( () => {
+        instance.hasAccess( () => {
           socket.on( 'message', ( message ) => {
             instance.onmessage(
-              message,
-              ( data ) => {
-                socket.send( data )
-              }, ( error ) => {
-                socket.send( 'ERROR ' + error.getCode() + ' : ' + error.getMessage() )
-                connection.close()
-              } )
+            message,
+            ( data ) => {
+              socket.send( data )
+            }, ( error ) => {
+              socket.send( 'ERROR ' + error.getCode() + ' : ' + error.getMessage() )
+              connection.close()
+            } )
           } )
           socket.on( 'close', () => {
             instance.terminate()
@@ -84,10 +83,9 @@ module.exports = ( config, server, connections ) => {
             socket.send( 'ERROR ' + error.getCode() + ' : ' + error.getMessage() )
             connection.close()
           } )
-        } )
-        .catch( ( capturedError ) => {
+        }, () => {
           let err = new ErrorClass( 403 )
-          socket.send( capturedError || err.getMessage() )
+          socket.send( err.getMessage() )
           connection.close()
         } )
       } )
