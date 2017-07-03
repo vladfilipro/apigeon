@@ -1,6 +1,6 @@
 {
     "name": "apigeon",
-    "version": "4.0.1",
+    "version": "4.0.2",
     "description": "An npm plugin for creating API applications",
     "author": "Vlad Filip ( vlad.filip.dev@gmail.com )",
     "license": "SEE LICENSE IN LICENSE.md",
