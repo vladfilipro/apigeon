@@ -10,18 +10,17 @@ class ConnectionFactory {
     this.connections = {}
   }
 
-  outputConnections () {
-    utils.logger.log( '( ' + Object.keys( this.connections ).length + ' active connections )' )
-  }
-
   createConnection ( socket ) {
     let connection = new Connection( socket )
-    connection.onClose( () => {
+    socket.on( 'close', () => {
       delete this.connections[ connection.id ]
-      this.outputConnections()
     } )
     this.connections[ connection.id ] = connection
-    this.outputConnections()
+    return connection
+  }
+
+  count () {
+    return Object.keys( this.connections )
   }
 
   close () {

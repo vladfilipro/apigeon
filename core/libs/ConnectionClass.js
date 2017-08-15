@@ -6,22 +6,13 @@ class ConnectionClass {
 
   constructor ( socket ) {
     this.id = utils.uid()
+    this.status = 1
     socket.apigeon = socket.apigeon || {}
     socket.apigeon.connectionId = this.id
     this.socket = socket
-
-    utils.logger.log( '#' + this.id + ' - open - ' + socket.remoteAddress )
-
     socket.on( 'close', () => {
-      utils.logger.log( '#' + this.id + ' - close - ' + socket.remoteAddress )
-      if ( typeof this.onClose === 'function' ) {
-        this.onClose()
-      }
+      this.status = 0
     } )
-  }
-
-  onClose ( cb ) {
-    this.onClose = cb
   }
 
   close () {

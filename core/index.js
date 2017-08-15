@@ -3,8 +3,6 @@
 const http = require( 'http' )
 const https = require( 'https' )
 
-const utils = require( __dirname + '/utils' )
-
 const ConfigClass = require( __dirname + '/libs/ConfigClass' )
 const ErrorClass = require( __dirname + '/libs/ErrorClass' )
 
@@ -53,25 +51,25 @@ module.exports = class Apigeon {
   }
 
   start ( port, done ) {
-    utils.logger.list( 'CONFIGURATION', [
-      'HTTP ROUTES PATH : ' + this.config.get( 'httpRoutesPath' ),
-      'SOCKET ROUTES PATH : ' + this.config.get( 'socketRoutesPath' ),
-      'MODE HTTP : ' + ( this.config.get( 'mode' ).http ),
-      'MODE WEBSOCKET : ' + ( this.config.get( 'mode' ).socket ),
-      'HTTPS : ' + ( !!this.config.get( 'httpsOptions' ) )
-    ] )
-
-    this.__server.listen( port, done )
-    utils.logger.info( 'Server started listening... ( PORT: ' + port + ' )' )
+    this.__server.listen( port, () => {
+      if ( typeof done === 'function' ) {
+        done()
+      }
+    } )
   }
 
   stop ( done ) {
     if ( this.__server.listening ) {
       this.__connections.close()
-      this.__server.close( done )
-      utils.logger.info( ' Server stopped. ' )
+      this.__server.close( () => {
+        if ( typeof done === 'function' ) {
+          done()
+        }
+      } )
     } else {
-      done()
+      if ( typeof done === 'function' ) {
+        done()
+      }
     }
   }
 

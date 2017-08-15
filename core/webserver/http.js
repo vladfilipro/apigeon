@@ -8,6 +8,7 @@ const HttpRouteClass = require( __dirname + '/../libs/HttpRouteClass' )
 
 module.exports = ( config, server, connections ) => {
   // Process request
+
   server.on( 'request', ( req, res ) => {
     config.extendRequest( req )
 
@@ -29,14 +30,11 @@ module.exports = ( config, server, connections ) => {
       failed = new ErrorClass( 404 )
     }
     if ( failed ) {
-      utils.logger.log( '#' + connection.id + ' - HTTP request fail ' + failed.getCode() + ' - ' + req.apigeon.method + ' - ' + req.apigeon.protocol + ' - ' + req.url )
       res.statusCode = failed.getCode()
-      res.end( failed.getMessage() )
+      res.end()
       connection.close()
       return
     }
-
-    utils.logger.log( '#' + connection.id + ' - HTTP request success 200 - ' + req.apigeon.method + ' - ' + req.apigeon.protocol + ' - ' + req.url )
 
     let executeMiddlewares = ( middlewares, request, response, cb ) => {
       let executeMiddleware = ( i ) => {
@@ -74,12 +72,12 @@ module.exports = ( config, server, connections ) => {
           instance.execute( ( data, code, headers ) => {
             proccessRequest( data, code || 200, headers )
           }, ( error ) => {
-            proccessRequest( error.getMessage(), error.getCode() )
+            proccessRequest( '', error.getCode() )
           } )
         }, () => {
           let err = new ErrorClass( 403 )
           res.statusCode = err.getCode()
-          res.end( err.getMessage() )
+          res.end()
           connection.close()
         } )
       } )

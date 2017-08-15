@@ -37,13 +37,9 @@ module.exports = ( config, server, connections ) => {
       failed = new ErrorClass( 404 )
     }
     if ( failed ) {
-      utils.logger.log( '#' + connection.id + ' - SOCKET request fail ' + failed.getCode() + ' - ' + req.apigeon.method + ' - ' + req.apigeon.protocol + ' - ' + req.url )
-      socket.send( failed.getMessage() )
       connection.close()
       return
     }
-
-    utils.logger.log( '#' + connection.id + ' - SOCKET request success 200 - ' + req.apigeon.method + ' - ' + req.apigeon.protocol + ' - ' + req.url )
 
     let executeMiddlewares = ( middlewares, socket, request, cb ) => {
       let executeMiddleware = ( i ) => {
