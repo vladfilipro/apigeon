@@ -18,6 +18,8 @@ module.exports = ( config, server, connections ) => {
 
     let connection = connections.getConnectionFromRequest( req )
 
+    req.apigeon.connection = connection
+
     req.apigeon.method = 'SOCKET'
 
     // Load requested route
@@ -26,7 +28,7 @@ module.exports = ( config, server, connections ) => {
 
     let failed = false
     if ( Route && ( Route.prototype instanceof SocketRouteClass ) ) {
-      instance = new Route( config, req, connection )
+      instance = new Route( req )
       if ( !instance.methodAllowed( req.apigeon.method.toUpperCase() ) ) {
         failed = new ErrorClass( 405 )
       }
@@ -61,24 +63,24 @@ module.exports = ( config, server, connections ) => {
         instance.hasAccess( () => {
           socket.on( 'message', ( message ) => {
             instance.onmessage(
-            message,
+              message,
+              ( data ) => {
+                socket.send( data )
+              }, ( error ) => {
+                socket.send( 'ERROR ' + error.getCode() + ' : ' + error.getMessage() )
+                connection.close()
+              } )
+          } )
+          socket.on( 'close', () => {
+            instance.terminate()
+          } )
+          instance.execute(
             ( data ) => {
               socket.send( data )
             }, ( error ) => {
               socket.send( 'ERROR ' + error.getCode() + ' : ' + error.getMessage() )
               connection.close()
             } )
-          } )
-          socket.on( 'close', () => {
-            instance.terminate()
-          } )
-          instance.execute(
-          ( data ) => {
-            socket.send( data )
-          }, ( error ) => {
-            socket.send( 'ERROR ' + error.getCode() + ' : ' + error.getMessage() )
-            connection.close()
-          } )
         }, () => {
           let err = new ErrorClass( 403 )
           socket.send( err.getMessage() )

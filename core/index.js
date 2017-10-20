@@ -12,7 +12,6 @@ const HttpRouteClass = require( __dirname + '/libs/HttpRouteClass' )
 const SocketRouteClass = require( __dirname + '/libs/SocketRouteClass' )
 
 module.exports = class Apigeon {
-
   static get classes () {
     return {
       HttpRouteClass: HttpRouteClass,
@@ -72,5 +71,4 @@ module.exports = class Apigeon {
       }
     }
   }
-
 }

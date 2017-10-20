@@ -5,7 +5,6 @@ const utils = require( __dirname + '/../utils' )
 const Connection = require( __dirname + '/ConnectionClass' )
 
 class ConnectionFactory {
-
   constructor () {
     this.connections = {}
   }
@@ -29,16 +28,16 @@ class ConnectionFactory {
     }
   }
 
-  getConnectionFromId ( id ) {
-    if ( this.connections[ id ] ) {
-      return this.connections[ id ]
+  getConnectionFromSocket ( socket ) {
+    if ( utils.isObject( socket ) && utils.isObject( socket.apigeon ) ) {
+      return socket.apigeon.connection
     }
     return null
   }
 
   getConnectionFromRequest ( req ) {
-    if ( utils.isObject( req ) && utils.isObject( req.socket ) && utils.isObject( req.socket.apigeon ) ) {
-      return this.getConnectionFromId( req.socket.apigeon.connectionId )
+    if ( utils.isObject( req ) && utils.isObject( req.socket ) ) {
+      return this.getConnectionFromSocket( req.socket )
     }
     return null
   }

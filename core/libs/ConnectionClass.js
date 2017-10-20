@@ -3,11 +3,10 @@
 const utils = require( __dirname + '/../utils' )
 
 class ConnectionClass {
-
   constructor ( socket ) {
     this.id = utils.uid()
     socket.apigeon = socket.apigeon || {}
-    socket.apigeon.connectionId = this.id
+    socket.apigeon.connection = this
     this.socket = socket
   }
 

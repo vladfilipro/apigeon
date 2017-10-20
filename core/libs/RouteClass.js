@@ -1,11 +1,8 @@
 'use strict'
 
 class RouteClass {
-
-  constructor ( config, request, connection ) {
-    this.config = config
+  constructor ( request ) {
     this.request = request
-    this.connection = connection
     this.middlewares = []
   }
 
@@ -26,7 +23,6 @@ class RouteClass {
   }
 
   terminate () {}
-
 }
 
 module.exports = RouteClass

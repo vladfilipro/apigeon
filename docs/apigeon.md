@@ -1,6 +1,6 @@
 # Apigeon class
 
-Every request that goes through Apigeon is altered by adding an additional property called `apigeon`. This proerty refers to an object containing processed data from the original request:
+Every request that goes through Apigeon is altered by adding an additional property called `apigeon`. This property refers to an object containing processed data from the original request:
 
 ```
 {
@@ -8,7 +8,8 @@ Every request that goes through Apigeon is altered by adding an additional prope
     pathname: location.pathname, // Parsed pathname of from the processed url
     method: req.method, // The http method or 'SOCKET' if accessing a SocketRoute
     protocol: req.protocol || ( req.headers[ 'X-Forwarded-Proto' ] ? req.headers[ 'X-Forwarded-Proto' ] : ( ( req.socket.encrypted ) ? 'https' : 'http' ) ),
-    query: location.query || {} // Object containing the query string parameters
+    query: location.query || {} // Object containing the query string parameters,
+    connection: connection // Instance of connection class
 }
 ```
 

@@ -2,6 +2,14 @@
 
 An instance of the ConnectionClass is generated for every request.
 
+The class also binds itself to the socket provided in the constructor. The socket gets a new property `apigeon` who refers to an object with the following description:
+
+```
+{
+    connection: connection // Current connection instance
+}
+```
+
 Property | Description
 --- | --- | --
 this.id | A unique identifier

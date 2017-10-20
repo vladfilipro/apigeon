@@ -14,12 +14,14 @@ module.exports = ( config, server, connections ) => {
 
     let connection = connections.getConnectionFromRequest( req )
 
+    req.apigeon.connection = connection
+
     // Load requested route
     let Route = utils.load( req.apigeon.pathname, config.get( 'httpRoutesPath' ) )
     let instance = null
     let failed = false
     if ( Route && ( Route.prototype instanceof HttpRouteClass ) ) {
-      instance = new Route( config, req, connection )
+      instance = new Route( req )
       if ( !instance.methodAllowed( req.apigeon.method.toUpperCase() ) ) {
         failed = new ErrorClass( 405 )
       }
