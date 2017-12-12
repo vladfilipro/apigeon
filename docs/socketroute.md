@@ -10,24 +10,24 @@ Note that the SocketMiddleware has the following interface:
 
 Method | Description | Return
 --- | --- | ---
-execute( callback, errorCallback ) | The execution function for the route | -
+execute( callback, end ) | The execution function for the route | -
 
 This method is called once all the checks for the route have passed.
 
 - The `callback` parameter is a function which accepts one parameter of type `String`, containing the response from the server
-- The `errorCallback` parameter is a function which accepts one parameter of type `String` which contains a final message and will terminate the connection.
+- The `end` parameter is a function which will terminate the connection.
 
 ---
 
 Method | Description | Return
 --- | --- | ---
-onmessage( data, callback, errorCallback ) | The message function for the route | -
+onmessage( data, callback, end ) | The message function for the route | -
 
 This method is called each time a message is received.
 
 - The `data` parameter contains the data sent by the client
 - The `callback` parameter is a function which accepts one parameter of type `String`, containing the response from the server
-- The `errorCallback` parameter is a function which accepts one parameter of type `String` which contains a final message and will terminate the connection.
+- The `end` parameter is a function which will terminate the connection.
 
 ---
 
@@ -50,15 +50,15 @@ module.exports = class Default extends Apigeon.classes.SocketRouteClass {
     } )
   }
 
-  onmessage ( data, cb, ecb ) {
+  onmessage ( data, cb, end ) {
     if ( data === 'Hello World!') {
         cb( 'Hello to you too!' )
     } else {
-        ecb()
+        end()
     }
   }
 
-  execute ( cb, ecb ) {
+  execute ( cb, end ) {
       cb( 'Connected' )
   }
 

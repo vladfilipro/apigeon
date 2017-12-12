@@ -3,12 +3,12 @@
 const RouteClass = require( __dirname + '/RouteClass' )
 
 class SocketRouteClass extends RouteClass {
-  onmessage ( data, callback, errorCallback ) {
-    errorCallback()
+  onmessage ( data, callback, end ) {
+    end()
   }
 
-  execute ( callback, errorCallback ) {
-    errorCallback()
+  execute ( callback, end ) {
+    end()
   }
 }
 

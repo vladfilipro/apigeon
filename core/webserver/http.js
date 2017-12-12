@@ -37,18 +37,6 @@ module.exports = ( config, server ) => {
       executeMiddleware( 0 )
     }
 
-    var proccessRequest = ( data, code, headers ) => {
-      res.statusCode = code
-      if ( utils.isObject( headers ) ) {
-        var headerNames = Object.keys( headers )
-        for ( var i = 0, l = headerNames.length; i < l; i++ ) {
-          res.setHeader( headerNames[ i ], headers[ headerNames[ i ] ] )
-        }
-      }
-      res.end( data || '' )
-      req.socket.destroy()
-    }
-
     // Call setup method
     instance.setup( () => {
       // Execute middlewares defined in the route once setup is done
@@ -58,11 +46,16 @@ module.exports = ( config, server ) => {
         } )
         // Once middlewares have been executed, execute the route
         instance.execute(
-          ( message, code, headers ) => {
-            proccessRequest( message, code || 200, headers )
-          },
-          ( message, code ) => {
-            proccessRequest( message, code || 500 )
+          ( data, code, headers ) => {
+            res.statusCode = code
+            if ( utils.isObject( headers ) ) {
+              var headerNames = Object.keys( headers )
+              for ( var i = 0, l = headerNames.length; i < l; i++ ) {
+                res.setHeader( headerNames[ i ], headers[ headerNames[ i ] ] )
+              }
+            }
+            res.end( data || '' )
+            req.socket.destroy()
           }
         )
       } )

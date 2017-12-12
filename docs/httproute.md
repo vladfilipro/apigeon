@@ -19,9 +19,6 @@ This method is called once all the checks for the route have passed.
  - data - type String - Contains the message to return to the client
  - code - type Integer - Contains the status code of the response ( default 200 )
  - headers - type Object - Contains an object representing the headers to return ( eg. Set-Cookie, Location, etc ) ( default {} )
-- The `errorCallback` parameter is a function which accepts two parameters and will terminate the connection.
- - data - type String - Contains the message to return to the client
- - code - type Integer - Contains the status code of the response ( default 500 )
 
 ---
 
@@ -51,7 +48,7 @@ module.exports = class Default extends Apigeon.classes.HttpRouteClass {
     } else if ( this.request.query.message === 'redirect' ) {
         cb( 'You will be redirected...', 302, { 'Location': 'http://vladfilip.ro' } )
     } else {
-        ecb( null, 403 )
+        cb( null, 403 )
     }
   }
 
