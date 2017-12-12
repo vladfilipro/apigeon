@@ -1,7 +1,6 @@
 # HttpRouteClass
 
 This class extends [RouteClass](https://github.com/vladfilipro/apigeon/blob/master/docs/route.md)
-A SocketRoute only accepts the method `GET`, `POST`, `PUT` or `DELETE` ( unless the `methodAllowed` is overwritten ).
 
 ---
 
@@ -20,13 +19,15 @@ This method is called once all the checks for the route have passed.
  - data - type String - Contains the message to return to the client
  - code - type Integer - Contains the status code of the response ( default 200 )
  - headers - type Object - Contains an object representing the headers to return ( eg. Set-Cookie, Location, etc ) ( default {} )
-- The `errorCallback` parameter is a function which accepts one parameter of type [ErrorClass](https://github.com/vladfilipro/apigeon/blob/master/docs/error.md). This will send the error provided to the client and terminate the connection.
+- The `errorCallback` parameter is a function which accepts two parameters and will terminate the connection.
+ - data - type String - Contains the message to return to the client
+ - code - type Integer - Contains the status code of the response ( default 500 )
 
 ---
 
 ### Example:
 
-The following example describes an HttpRoute which returns a 500 error
+The following example describes an HttpRoute
 
 ```
 
@@ -45,12 +46,12 @@ module.exports = class Default extends Apigeon.classes.HttpRouteClass {
   }
 
   execute ( cb, ecb ) {
-    if ( this.request.apigeon.query.message === 'hello') {
+    if ( this.request.query.message === 'hello') {
         cb( 'Hello!', 200, {} )
-    } else if ( this.request.apigeon.query.message === 'redirect' ) {
+    } else if ( this.request.query.message === 'redirect' ) {
         cb( 'You will be redirected...', 302, { 'Location': 'http://vladfilip.ro' } )
     } else {
-        ecb( new Apigeon.classes.ErrorClass( 403 ) )
+        ecb( null, 403 )
     }
   }
 

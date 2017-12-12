@@ -10,18 +10,6 @@ class RouteClass {
     done()
   }
 
-  hasAccess ( resolve, reject ) {
-    resolve()
-  }
-
-  methodAllowed ( method ) {
-    return true
-  }
-
-  protocolAllowed ( protocol ) {
-    return true
-  }
-
   terminate () {}
 }
 

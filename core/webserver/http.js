@@ -1,40 +1,24 @@
 'use strict'
 
 const utils = require( __dirname + '/../utils' )
-
-const ErrorClass = require( __dirname + '/../libs/ErrorClass' )
-
+const fExtendRequest = require( __dirname + '/../libs/fExtendRequest' )
 const HttpRouteClass = require( __dirname + '/../libs/HttpRouteClass' )
 
-module.exports = ( config, server, connections ) => {
+module.exports = ( config, server ) => {
   // Process request
 
   server.on( 'request', ( req, res ) => {
-    config.extendRequest( req )
-
-    let connection = connections.getConnectionFromRequest( req )
-
-    req.apigeon.connection = connection
+    fExtendRequest( req )
 
     // Load requested route
-    let Route = utils.load( req.apigeon.pathname, config.get( 'httpRoutesPath' ) )
     let instance = null
-    let failed = false
+    let Route = config.get( 'httpRoutes' )( req.url )
     if ( Route && ( Route.prototype instanceof HttpRouteClass ) ) {
       instance = new Route( req )
-      if ( !instance.methodAllowed( req.apigeon.method.toUpperCase() ) ) {
-        failed = new ErrorClass( 405 )
-      }
-      if ( !instance.protocolAllowed( req.apigeon.protocol.toUpperCase() ) ) {
-        failed = new ErrorClass( 403 )
-      }
     } else {
-      failed = new ErrorClass( 404 )
-    }
-    if ( failed ) {
-      res.statusCode = failed.getCode()
+      res.statusCode = 404
       res.end()
-      connection.close()
+      req.socket.destroy()
       return
     }
 
@@ -61,27 +45,26 @@ module.exports = ( config, server, connections ) => {
           res.setHeader( headerNames[ i ], headers[ headerNames[ i ] ] )
         }
       }
-      res.end( data )
-      connection.close()
+      res.end( data || '' )
+      req.socket.destroy()
     }
 
+    // Call setup method
     instance.setup( () => {
+      // Execute middlewares defined in the route once setup is done
       executeMiddlewares( instance.middlewares, req, res, () => {
-        instance.hasAccess( () => {
-          res.on( 'finish', () => {
-            instance.terminate()
-          } )
-          instance.execute( ( data, code, headers ) => {
-            proccessRequest( data, code || 200, headers )
-          }, ( error ) => {
-            proccessRequest( '', error.getCode() )
-          } )
-        }, () => {
-          let err = new ErrorClass( 403 )
-          res.statusCode = err.getCode()
-          res.end()
-          connection.close()
+        res.on( 'finish', () => {
+          instance.terminate()
         } )
+        // Once middlewares have been executed, execute the route
+        instance.execute(
+          ( message, code, headers ) => {
+            proccessRequest( message, code || 200, headers )
+          },
+          ( message, code ) => {
+            proccessRequest( message, code || 500 )
+          }
+        )
       } )
     } )
   } )

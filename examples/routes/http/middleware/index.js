@@ -14,7 +14,6 @@ const form = ' \
 '
 
 module.exports = class Default extends Apigeon.classes.HttpRouteClass {
-
   setup ( done ) {
     this.middlewares.push( bodyParser.urlencoded( { extended: false } ) )
     done()
@@ -27,5 +26,4 @@ module.exports = class Default extends Apigeon.classes.HttpRouteClass {
       { 'Content-Type': 'text/html' }
     )
   }
-
 }

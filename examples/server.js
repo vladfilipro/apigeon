@@ -1,12 +1,23 @@
 'use strict'
 
-const PORT = 8080
-
+const Url = require( 'url' )
 const Apigeon = require( './../core' )
 
+const PORT = 8080
+
 let server = new Apigeon( {
-  httpRoutesPath: __dirname + '/routes/http',
-  socketRoutesPath: __dirname + '/routes/socket'
+  mode: {
+    http: true,
+    socket: true
+  },
+  httpRoutes: ( url ) => {
+    let urlParts = Url.parse( url )
+    return require( __dirname + '/routes/http' + urlParts.pathname )
+  },
+  socketRoutes: ( url ) => {
+    let urlParts = Url.parse( url )
+    return require( __dirname + '/routes/socket' + urlParts.pathname )
+  }
 } )
 
 server.start( PORT )

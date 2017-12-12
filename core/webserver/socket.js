@@ -2,51 +2,32 @@
 
 const WebSocketServer = require( 'ws' ).Server
 
-const utils = require( __dirname + '/../utils' )
-
-const ErrorClass = require( __dirname + '/../libs/ErrorClass' )
-
+const fExtendRequest = require( __dirname + '/../libs/fExtendRequest' )
 const SocketRouteClass = require( __dirname + '/../libs/SocketRouteClass' )
 
-module.exports = ( config, server, connections ) => {
+module.exports = ( config, server ) => {
   let ws = new WebSocketServer( {
     server: server
   } )
+  // Process request
 
-  ws.on( 'connection', ( socket, req ) => {
-    config.extendRequest( req )
-
-    let connection = connections.getConnectionFromRequest( req )
-
-    req.apigeon.connection = connection
-
-    req.apigeon.method = 'SOCKET'
+  ws.on( 'connection', ( wsSocket, req ) => {
+    fExtendRequest( req )
 
     // Load requested route
-    let Route = utils.load( req.apigeon.pathname, config.get( 'socketRoutesPath' ) )
     let instance = null
-
-    let failed = false
+    let Route = config.get( 'socketRoutes' )( req.url )
     if ( Route && ( Route.prototype instanceof SocketRouteClass ) ) {
       instance = new Route( req )
-      if ( !instance.methodAllowed( req.apigeon.method.toUpperCase() ) ) {
-        failed = new ErrorClass( 405 )
-      }
-      if ( !instance.protocolAllowed( req.apigeon.protocol.toUpperCase() ) ) {
-        failed = new ErrorClass( 403 )
-      }
     } else {
-      failed = new ErrorClass( 404 )
-    }
-    if ( failed ) {
-      connection.close()
+      wsSocket.terminate()
       return
     }
 
-    let executeMiddlewares = ( middlewares, socket, request, cb ) => {
+    let executeMiddlewares = ( middlewares, wsSocket, request, cb ) => {
       let executeMiddleware = ( i ) => {
         if ( middlewares.length > i ) {
-          middlewares[ i ]( socket, request, () => {
+          middlewares[ i ]( wsSocket, request, () => {
             executeMiddleware( i + 1 )
           } )
         } else {
@@ -58,34 +39,34 @@ module.exports = ( config, server, connections ) => {
       executeMiddleware( 0 )
     }
 
+    // Call setup method
     instance.setup( () => {
-      executeMiddlewares( instance.middlewares, socket, req, () => {
-        instance.hasAccess( () => {
-          socket.on( 'message', ( message ) => {
-            instance.onmessage(
-              message,
-              ( data ) => {
-                socket.send( data )
-              }, ( error ) => {
-                socket.send( 'ERROR ' + error.getCode() + ' : ' + error.getMessage() )
-                connection.close()
-              } )
-          } )
-          socket.on( 'close', () => {
-            instance.terminate()
-          } )
-          instance.execute(
+      // Execute middlewares defined in the route once setup is done
+      executeMiddlewares( instance.middlewares, wsSocket, req, () => {
+        wsSocket.on( 'message', ( message ) => {
+          instance.onmessage(
+            message,
             ( data ) => {
-              socket.send( data )
-            }, ( error ) => {
-              socket.send( 'ERROR ' + error.getCode() + ' : ' + error.getMessage() )
-              connection.close()
+              wsSocket.send( data )
+            },
+            ( error ) => {
+              wsSocket.send( error )
+              wsSocket.terminate()
             } )
-        }, () => {
-          let err = new ErrorClass( 403 )
-          socket.send( err.getMessage() )
-          connection.close()
         } )
+        wsSocket.on( 'close', () => {
+          instance.terminate()
+        } )
+        // Once middlewares have been executed, execute the route
+        instance.execute(
+          ( data ) => {
+            wsSocket.send( data )
+          },
+          ( error ) => {
+            wsSocket.send( error )
+            wsSocket.terminate()
+          }
+        )
       } )
     } )
   } )

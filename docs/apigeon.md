@@ -1,16 +1,12 @@
 # Apigeon class
 
-Every request that goes through Apigeon is altered by adding an additional property called `apigeon`. This property refers to an object containing processed data from the original request:
+Every request that goes through Apigeon is altered by adding some additional properties:
 
 ```
-{
-    url: newUrl, // Url parsed by the rewrite() function provided in the configuration
     pathname: location.pathname, // Parsed pathname of from the processed url
     method: req.method, // The http method or 'SOCKET' if accessing a SocketRoute
     protocol: req.protocol || ( req.headers[ 'X-Forwarded-Proto' ] ? req.headers[ 'X-Forwarded-Proto' ] : ( ( req.socket.encrypted ) ? 'https' : 'http' ) ),
     query: location.query || {} // Object containing the query string parameters,
-    connection: connection // Instance of connection class
-}
 ```
 
 Method | Description | Return
@@ -23,8 +19,16 @@ constructor( configuration ) |  The Apigeon application constructor | -
 
 ```
 {
-  httpRoutesPath: __dirname + '/routes/http', // Path to http routes folder
-  socketRoutesPath: __dirname + '/routes/socket', // Path to socket routes folder
+  // A function for processing urls before the http classes are executed.
+  httpRoutes: ( url ) => {
+    let urlParts = Url.parse( url )
+    return require( __dirname + '/routes/http' + urlParts.pathname )
+  },
+  // A function for processing urls before the socket classes are executed.
+  socketRoutes: ( url ) => {
+    let urlParts = Url.parse( url )
+    return require( __dirname + '/routes/socket' + urlParts.pathname )
+  },
   mode: {
     http: true, // Enable http mode
     socket: true // Enable socket mode
@@ -35,16 +39,8 @@ constructor( configuration ) |  The Apigeon application constructor | -
   // See https://nodejs.org/api/http.html
   server: null,
 
-  // A function for processing urls before they are executed.
-  // Can be used like mod_rewrite
-  rewrite: ( url ) => {
-    return url
-  },
-
-  // This object will be passed to the server create method
-  // ( if the `server` property is null ) in order to create
-  // an https server. See https://nodejs.org/api/https.html
-  httpsOptions: null
+  // Server timeout is a shorthand for HttpServer.timeout
+  timeout: 120000
 }
 ```
 
@@ -56,7 +52,7 @@ start( port, cb ) | Starts the webserver | -
 
 The start method is used to make the server start listening for connections on the described port
 
-- The `port` parameter is the port for the http server
+- The `port` parameter is the port for the server
 - The `cb` parameter is a function that will be called once the server starts ( optional )
 
 ---
@@ -80,7 +76,6 @@ The classes method returns an object containing public classes that are needed i
 
  - HttpRouteClass
  - SocketRouteClass
- - ErrorClass
 
 ---
 
@@ -89,16 +84,25 @@ The classes method returns an object containing public classes that are needed i
 ```
 'use strict'
 
-const PORT = 8080
-
+const Url = require( 'url' )
 const Apigeon = require( 'apigeon' )
 
-let config = {
-  httpRoutesPath: __dirname + '/routes/http',
-  socketRoutesPath: __dirname + '/routes/socket'
-}
+const PORT = 8080
 
-let server = new Apigeon( config )
+let server = new Apigeon( {
+  mode: {
+    http: true,
+    socket: true
+  },
+  httpRoutes: ( url ) => {
+    let urlParts = Url.parse( url )
+    return require( __dirname + '/routes/http' + urlParts.pathname )
+  },
+  socketRoutes: ( url ) => {
+    let urlParts = Url.parse( url )
+    return require( __dirname + '/routes/socket' + urlParts.pathname )
+  }
+} )
 
 server.start( PORT )
 

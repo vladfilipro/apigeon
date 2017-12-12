@@ -13,21 +13,30 @@ npm install apigeon
 ```
 
 ## Usage
-A basic example of how to use Apigeon. The `httpRoutesPath` and `socketRoutesPath` should point to the folder containing the route classes.
+A basic example of how to use Apigeon.
 
 ```
 'use strict'
 
-const PORT = 8080
-
+const Url = require( 'url' )
 const Apigeon = require( 'apigeon' )
 
-let config = {
-  httpRoutesPath: __dirname + '/routes/http',
-  socketRoutesPath: __dirname + '/routes/socket'
-}
+const PORT = 8080
 
-let server = new Apigeon( config )
+let server = new Apigeon( {
+  mode: {
+    http: true,
+    socket: true
+  },
+  httpRoutes: ( url ) => {
+    let urlParts = Url.parse( url )
+    return require( __dirname + '/routes/http' + urlParts.pathname )
+  },
+  socketRoutes: ( url ) => {
+    let urlParts = Url.parse( url )
+    return require( __dirname + '/routes/socket' + urlParts.pathname )
+  }
+} )
 
 server.start( PORT )
 ```
@@ -50,70 +59,14 @@ In order to run the examples provided with the package, clone the repository fou
 ```
 npm install
 
-npm test
 ```
 
 ---
 
-#### A complete example:
-
-- Create a folder: /home/user/apigeon
-
-- Inside the folder run:
+- To test the examples:
 
 ```
-npm install apigeon
-```
-
-- HttpRoute file: /home/user/apigeon/routes/index.js
-
-```
-'use strict'
-
-const Apigeon = require( 'apigeon' )
-
-module.exports = class Default extends Apigeon.classes.HttpRouteClass {
-
-  execute ( cb, ecb ) {
-    if ( this.request.apigeon.query.message === 'hello') {
-        cb( 'Hello!', 200, {} )
-    } else if ( this.request.apigeon.query.message === 'redirect' ) {
-        cb( 'You will be redirected...', 302, { 'Location': 'https://github.com' } )
-    } else {
-        ecb( new Apigeon.classes.ErrorClass( 403 ) )
-    }
-  }
-
-}
-```
-
-- Main file: /home/user/apigeon/server.js
-
-```
-
-'use strict'
-
-const PORT = 8080
-
-const Apigeon = require( 'apigeon' )
-
-let config = {
-  httpRoutesPath: __dirname + '/routes',
-  mode: {
-      socket: false
-  }
-}
-
-let server = new Apigeon( config )
-
-server.start( PORT )
-
-```
-
-- To test the example:
-
-```
-node server.js
+node test
 ```
 
 - Navigate to :

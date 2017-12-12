@@ -12,7 +12,6 @@ const form = '\
 '
 
 module.exports = class Default extends Apigeon.classes.HttpRouteClass {
-
   execute ( cb ) {
     cb(
       form,
@@ -20,5 +19,4 @@ module.exports = class Default extends Apigeon.classes.HttpRouteClass {
       { 'Content-Type': 'text/html' }
     )
   }
-
 }
