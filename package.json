@@ -1,6 +1,6 @@
 {
     "name": "apigeon",
-    "version": "6.1.0",
+    "version": "6.1.1",
     "description": "An npm plugin for creating wev applications",
     "author": "Vlad Filip ( vlad.filip.dev@gmail.com )",
     "license": "SEE LICENSE IN LICENSE",

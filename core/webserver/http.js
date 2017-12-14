@@ -47,14 +47,14 @@ module.exports = ( config, server ) => {
         // Once middlewares have been executed, execute the route
         instance.execute(
           ( data, code, headers ) => {
-            res.statusCode = code
+            res.statusCode = code || 200
             if ( utils.isObject( headers ) ) {
               var headerNames = Object.keys( headers )
               for ( var i = 0, l = headerNames.length; i < l; i++ ) {
                 res.setHeader( headerNames[ i ], headers[ headerNames[ i ] ] )
               }
             }
-            res.end( data || '' )
+            res.end( data || ' ' )
             req.socket.destroy()
           }
         )
