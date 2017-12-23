@@ -43,10 +43,10 @@ module.exports = ( config, server ) => {
     instance.setup( () => {
       // Execute middlewares defined in the route once setup is done
       executeMiddlewares( instance.middlewares, wsSocket, req, () => {
+        wsSocket.on( 'close', () => {
+          instance.terminate()
+        } )
         wsSocket.on( 'message', ( message ) => {
-          wsSocket.on( 'close', () => {
-            instance.terminate()
-          } )
           instance.onmessage(
             message,
             ( data ) => {
