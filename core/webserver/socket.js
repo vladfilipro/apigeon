@@ -25,7 +25,7 @@ module.exports = ( config, server ) => {
       let executeMiddlewares = ( middlewares, request, end, cb ) => {
         let executeMiddleware = ( i ) => {
           if ( middlewares.length > i ) {
-            middlewares[ i ]( end, request, () => {
+            middlewares[ i ]( request, end, () => {
               executeMiddleware( i + 1 )
             } )
           } else {
