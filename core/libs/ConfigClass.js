@@ -12,7 +12,8 @@ class ConfigClass {
       httpRoutes: () => null,
       socketRoutes: () => null,
       server: null,
-      timeout: 120000
+      timeout: 120000,
+      maxPayload: 2048
     }, ( config instanceof ConfigClass ) ? config.get() : config )
   }
 

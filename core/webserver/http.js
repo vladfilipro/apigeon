@@ -41,6 +41,7 @@ module.exports = ( config, server ) => {
     instance.setup( () => {
       // Execute middlewares defined in the route once setup is done
       executeMiddlewares( instance.middlewares, req, res, () => {
+        req.__route = instance
         res.on( 'finish', () => {
           instance.terminate()
         } )

@@ -4,7 +4,9 @@ This class extends [RouteClass](https://github.com/vladfilipro/apigeon/blob/mast
 
 ---
 Note that the SocketMiddleware has the following interface:
-`function( socket, req, callback )`
+`function( req, end, callback )`
+
+- The `end` function accepts one parameter, which is the status code to return. The `end()` function should be called if the connection should never be established.
 
 ---
 
@@ -15,7 +17,7 @@ execute( callback, end ) | The execution function for the route | -
 This method is called once all the checks for the route have passed.
 
 - The `callback` parameter is a function which accepts one parameter of type `String`, containing the response from the server
-- The `end` parameter is a function which will terminate the connection.
+- The `end` parameter is a function which will terminate the connection. Unlike the end method in the middlewares, the method in `execute` does not accept a parameter
 
 ---
 
@@ -27,7 +29,7 @@ This method is called each time a message is received.
 
 - The `data` parameter contains the data sent by the client
 - The `callback` parameter is a function which accepts one parameter of type `String`, containing the response from the server
-- The `end` parameter is a function which will terminate the connection.
+- The `end` parameter is a function which will terminate the connection. Unlike the end method in the middlewares, the method in `onmessage` does not accept a parameter
 
 ---
 
@@ -44,7 +46,7 @@ module.exports = class Default extends Apigeon.classes.SocketRouteClass {
 
   setup( done ) {
     // Adding a middleware
-    this.middlewares.push( ( socket, req, cb ) => {
+    this.middlewares.push( ( req, end, cb ) => {
         // Do something
         cb ( done )
     } )
