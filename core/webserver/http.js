@@ -18,7 +18,6 @@ module.exports = ( config, server ) => {
     } else {
       res.statusCode = 404
       res.end()
-      req.socket.destroy()
       return
     }
 
@@ -56,7 +55,6 @@ module.exports = ( config, server ) => {
               }
             }
             res.end( data || ' ' )
-            req.socket.destroy()
           }
         )
       } )

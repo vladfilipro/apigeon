@@ -1,6 +1,6 @@
 {
     "name": "apigeon",
-    "version": "6.2.1",
+    "version": "7.0.0",
     "description": "An npm plugin for creating wev applications",
     "author": "Vlad Filip ( vlad.filip.dev@gmail.com )",
     "license": "SEE LICENSE IN LICENSE",
@@ -23,7 +23,7 @@
         "url": "https://github.com/vladfilipro/apigeon/issues"
     },
     "dependencies": {
-        "ws": "^3.3.2"
+        "ws": "^4.0.0"
     },
     "devDependencies": {
         "body-parser": "^1.18.2"
