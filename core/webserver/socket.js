@@ -56,6 +56,9 @@ module.exports = ( config, server ) => {
 
   // Connection established
   ws.on( 'connection', ( wsSocket, req ) => {
+    wsSocket.on( 'error', () => {
+      req.__route.terminate()
+    } )
     wsSocket.on( 'close', () => {
       req.__route.terminate()
     } )
