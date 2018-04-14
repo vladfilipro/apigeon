@@ -41,6 +41,19 @@ constructor( configuration ) |  The Apigeon application constructor | -
 
   // Server timeout is a shorthand for HttpServer.timeout
   timeout: 120000
+
+  // The maximum package size allowed on a socket
+  socketMaxPayload: 2048,
+
+  // A validation function which determines if the connection should be accepted
+  // If is set to a function, the function needs to return a promise
+  // If the promise is rejected, the connection will be terminated
+  socketAuthorization: ( info, done ) => {
+    return new Promise( ( resolve, reject )=> {
+      // Authorize the connection
+      resolve()
+    } )
+  } 
 }
 ```
 

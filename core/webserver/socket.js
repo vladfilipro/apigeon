@@ -22,36 +22,49 @@ module.exports = ( config, server ) => {
         return
       }
 
-      let executeMiddlewares = ( middlewares, request, end, cb ) => {
-        let executeMiddleware = ( i ) => {
-          if ( middlewares.length > i ) {
-            middlewares[ i ]( request, end, () => {
-              executeMiddleware( i + 1 )
-            } )
-          } else {
-            if ( typeof cb === 'function' ) {
-              cb()
+      const execute = () => {
+        let executeMiddlewares = ( middlewares, request, end, cb ) => {
+          let executeMiddleware = ( i ) => {
+            if ( middlewares.length > i ) {
+              middlewares[ i ]( request, end, () => {
+                executeMiddleware( i + 1 )
+              } )
+            } else {
+              if ( typeof cb === 'function' ) {
+                cb()
+              }
             }
           }
+          executeMiddleware( 0 )
         }
-        executeMiddleware( 0 )
+
+        // Call setup method
+        instance.setup( () => {
+        // Execute middlewares defined in the route once setup is done
+          executeMiddlewares( instance.middlewares, req,
+            ( statusCode ) => {
+              done( false, statusCode )
+            }
+            , () => {
+              req.__route = instance
+              done( true )
+            } )
+        } )
       }
 
-      // Call setup method
-      instance.setup( () => {
-        // Execute middlewares defined in the route once setup is done
-        executeMiddlewares( instance.middlewares, req,
-          ( statusCode ) => {
-            done( false, statusCode )
-          }
-          , () => {
-            req.__route = instance
-            done( true )
+      const socketAuthorization = config.get( 'socketAuthorization' )
+      if ( typeof socketAuthorization === 'function' ) {
+        socketAuthorization( info, done )
+          .then( execute )
+          .catch( () => {
+            done( false, 403 )
           } )
-      } )
+      } else {
+        execute()
+      }
     },
     clientTracking: false,
-    maxPayload: config.get( 'maxPayload' )
+    socketMaxPayload: config.get( 'maxPayload' )
   } )
 
   // Connection established

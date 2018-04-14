@@ -1,7 +1,7 @@
 {
     "name": "apigeon",
-    "version": "7.0.1",
-    "description": "An npm plugin for creating wev applications",
+    "version": "7.1.0",
+    "description": "An npm plugin for creating web applications",
     "author": "Vlad Filip ( vlad.filip.dev@gmail.com )",
     "license": "SEE LICENSE IN LICENSE",
     "engines": {
@@ -23,10 +23,11 @@
         "url": "https://github.com/vladfilipro/apigeon/issues"
     },
     "dependencies": {
-        "ws": "^4.0.0"
+        "ws": "^5.1.1"
     },
     "devDependencies": {
-        "body-parser": "^1.18.2"
+        "body-parser": "^1.18.2",
+        "eslint": "^4.19.1"
     },
     "scripts": {
         "test": "npm outdated && node ./examples/server.js"

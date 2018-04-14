@@ -13,15 +13,17 @@ class ConfigClass {
       socketRoutes: () => null,
       server: null,
       timeout: 120000,
-      maxPayload: 2048
+      socketMaxPayload: 2048,
+      socketAuthorization: null
     }, ( config instanceof ConfigClass ) ? config.get() : config )
   }
 
-  get ( prop ) {
-    if ( prop ) {
-      return this.data[ prop ]
-    }
-    return this.data
+  set ( key, value ) {
+    utils.setter( key, value, this.data )
+    return this
+  }
+  get ( key ) {
+    return utils.getter( key, this.data )
   }
 }
 
